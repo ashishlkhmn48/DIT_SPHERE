@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <item android:title="Students Corner">
+        <menu>
+            <group android:checkableBehavior="single">
+
+                <item
+                    android:id="@+id/calendar"
+                    android:icon="@drawable/calendar"
+                    android:title="Academic Calendar" />
+
+                <item
+                    android:id="@+id/fees"
+                    android:icon="@drawable/fees"
+                    android:title="Fees Structure" />
+
+                <item
+                    android:id="@+id/syllabus"
+                    android:icon="@drawable/syllabus"
+                    android:title="Syllabus" />
+
+                <item
+                    android:id="@+id/interact"
+                    android:icon="@drawable/interact"
+                    android:title="Interact with Students" />
+
+            </group>
+        </menu>
+    </item>
+
+
+    <item android:title="Exam Corner">
+        <menu>
+            <group android:checkableBehavior="single">
+
+                <item
+                    android:id="@+id/schedule"
+                    android:icon="@drawable/schedule"
+                    android:title="Exam Schedule" />
+
+                <item
+                    android:id="@+id/seating"
+                    android:icon="@drawable/seating"
+                    android:title="Seating Plan" />
+
+            </group>
+        </menu>
+    </item>
+
+
+    <item android:title="Your Corner">
+        <menu>
+            <group android:checkableBehavior="single">
+
+                <item
+                    android:id="@+id/download"
+                    android:icon="@drawable/download"
+                    android:title="Downloads" />
+
+
+            </group>
+        </menu>
+    </item>
+
+</menu>

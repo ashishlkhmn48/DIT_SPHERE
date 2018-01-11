@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:id="@+id/trick"
+        android:icon="@drawable/overflow"
+        android:orderInCategory="101"
+        android:title=""
+        app:showAsAction="always">  <!-- A trick to display icons in overflow menu -->
+
+        <menu>
+
+
+            <item
+                android:id="@+id/help"
+                android:icon="@drawable/help"
+                android:orderInCategory="100"
+                android:title="Help"
+                app:showAsAction="never" />
+
+
+            <item
+                android:id="@+id/about"
+                android:icon="@drawable/about"
+                android:orderInCategory="101"
+                android:title="About Developer"
+                app:showAsAction="never" />
+
+
+            <item
+                android:id="@+id/gmail"
+                android:icon="@drawable/email"
+                android:orderInCategory="102"
+                android:title="Suggest Developer"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/logout"
+                android:icon="@drawable/logout"
+                android:orderInCategory="103"
+                android:title="Log Out"
+                app:showAsAction="never" />
+
+        </menu>
+    </item>
+
+
+</menu>

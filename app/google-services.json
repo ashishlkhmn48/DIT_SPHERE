@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "746201752368",
+    "firebase_url": "https://dit-sphere.firebaseio.com",
+    "project_id": "dit-sphere",
+    "storage_bucket": "dit-sphere.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:746201752368:android:ce75f815c8241e6f",
+        "android_client_info": {
+          "package_name": "com.ashishlakhmani.dit_sphere"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "746201752368-dtuoh6u5v2ao9gl24dg0s8fc72lqtuvt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ashishlakhmani.dit_sphere",
+            "certificate_hash": "aa91ad2d5d8af6d77d553d0a0b9f3cde7ad903bb"
+          }
+        },
+        {
+          "client_id": "746201752368-32erj80kec6l8kr3s1iom1g5565frm1p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrGHVEJZifYUjqFDlsuawoiaqDtVt9JEQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "746201752368-32erj80kec6l8kr3s1iom1g5565frm1p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

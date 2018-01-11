@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/news"
+        android:icon="@drawable/news"
+        android:title="News" />
+
+    <item
+        android:id="@+id/result"
+        android:icon="@drawable/result"
+        android:title="Result" />
+
+    <item
+        android:id="@+id/calculator"
+        android:icon="@drawable/calculator"
+        android:title="Pointer Calculator" />
+
+</menu>
