@@ -87,10 +87,12 @@ public class InteractActivity extends AppCompatActivity {
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             progressDialog.setTitle("Backup");
             progressDialog.setMessage("Loading all the Messages.");
+            progressDialog.setCancelable(false);
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Backup");
             builder.setMessage("All your Unsent Messages will not be Sent.\nDo you still want to Load all the Messages ?");
+            builder.setCancelable(false);
 
             builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                 @Override
@@ -101,7 +103,7 @@ public class InteractActivity extends AppCompatActivity {
 
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
+                public void onClick(final DialogInterface dialog, int which) {
                     dialog.dismiss();
                     progressDialog.show();
                     final SharedPreferences sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
@@ -113,23 +115,29 @@ public class InteractActivity extends AppCompatActivity {
                         @Override
                         public void done(List<ParseObject> objects, ParseException e) {
                             if (e == null) {
-                                chatDatabase.deleteData();
-                                for (ParseObject obj : objects) {
-                                    String id = obj.getString("student_id");
-                                    String message = obj.getString("message");
-                                    Date date = obj.getDate("date");
-                                    String sendStatus = "";
-                                    if (id.equals(sharedPreferences.getString("id", ""))) {
-                                        sendStatus = "sent";
+
+                                if (!objects.isEmpty()) {
+                                    chatDatabase.deleteData();
+                                    for (ParseObject obj : objects) {
+                                        String id = obj.getString("student_id");
+                                        String message = obj.getString("message");
+                                        Date date = obj.getDate("date");
+                                        String sendStatus = "";
+                                        if (id.equals(sharedPreferences.getString("id", ""))) {
+                                            sendStatus = "sent";
+                                        }
+
+                                        MessageObject messageObject = new MessageObject(id, message, date.toString(), sendStatus);
+                                        chatDatabase.addUserDetails(messageObject);
+                                        progressDialog.dismiss();
+
+                                        loadMessages();
                                     }
-
-                                    MessageObject messageObject = new MessageObject(id, message, date.toString(), sendStatus);
-                                    chatDatabase.addUserDetails(messageObject);
+                                } else {
                                     progressDialog.dismiss();
-
-                                    loadMessages();
                                 }
                             } else {
+                                progressDialog.dismiss();
                                 Toast.makeText(InteractActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -273,7 +281,6 @@ public class InteractActivity extends AppCompatActivity {
 
         if (!msg.getText().toString().trim().isEmpty()) {
             final SharedPreferences sp = getSharedPreferences("login", MODE_PRIVATE);
-
             final String student_id = sp.getString("id", "");
             final String message = msg.getText().toString().trim();
             final Date currentDateTime = new Date();

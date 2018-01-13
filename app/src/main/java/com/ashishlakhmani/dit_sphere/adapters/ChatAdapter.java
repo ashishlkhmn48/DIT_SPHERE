@@ -31,7 +31,6 @@ import com.parse.ParseQuery;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.Locale;
 
 
@@ -39,8 +38,6 @@ public class ChatAdapter extends RecyclerView.Adapter {
 
     private Context context;
     private ArrayList<MessageObject> messageObjectList;
-
-    private LinkedList<MessageObject> deleteList;
 
     public ChatAdapter(Context context, ArrayList<MessageObject> messageObjectList) {
         this.context = context;
@@ -207,17 +204,33 @@ public class ChatAdapter extends RecyclerView.Adapter {
     }
 
     private String getDateFormat(String date) {
-        Date d = new Date(date);
-        String myFormat = "dd MMM yy";
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.UK);
-        return sdf.format(d);
+
+        Date d = new Date();
+        try {
+            d = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT+05:30' yyyy", Locale.UK).parse(date);
+            String myFormat = "dd MMM yyyy";
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.UK);
+            return sdf.format(d);
+        } catch (java.text.ParseException e) {
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+        return d.toString();
     }
 
     private String getTimeFormat(String date) {
-        Date d = new Date(date);
-        String myFormat = "HH:mm";
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.UK);
-        return sdf.format(d);
+
+        Date d = new Date();
+        try {
+            d = new SimpleDateFormat("EEE MMM dd HH:mm:ss 'GMT+05:30' yyyy", Locale.UK).parse(date);
+            String myFormat = "HH:mm";
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.UK);
+            return sdf.format(d);
+        } catch (java.text.ParseException e) {
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+        return d.toString();
     }
 
 

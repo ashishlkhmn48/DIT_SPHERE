@@ -34,6 +34,7 @@ public class FcmMessagingService extends FirebaseMessagingService {
         String id = remoteMessage.getData().get("student_id");
         String message = remoteMessage.getData().get("message");
         String date = remoteMessage.getData().get("date");
+        Log.i("Date",date);
 
         LocalChatDatabase chatDatabase = new LocalChatDatabase(this, null, null, 1);
         MessageObject messageObject = new MessageObject(id, message, date, "");
