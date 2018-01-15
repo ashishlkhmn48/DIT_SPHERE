@@ -48,7 +48,7 @@ public class InsertToDatabase extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... params) {
 
-        String call_url = "http://lakhmanianita.000webhostapp.com/insert_token.php";
+        String call_url = "http://lakhmanianita.000webhostapp.com/dit_sphere/insert_token.php";
         try {
             String id = params[0];
             String fcm_token = params[1];

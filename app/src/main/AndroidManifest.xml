@@ -83,7 +83,7 @@
         <!-- Firebase Push Notification Services and Receivers -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/interact_2" />
+            android:resource="@drawable/sphere" />
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

@@ -26,13 +26,12 @@ import android.widget.ToggleButton;
 
 import com.ashishlakhmani.dit_sphere.R;
 import com.ashishlakhmani.dit_sphere.activities.HomeActivity;
-import com.ashishlakhmani.dit_sphere.fragments.news.NewsImage;
+import com.ashishlakhmani.dit_sphere.fragments.news.NewsWebView;
 import com.ashishlakhmani.dit_sphere.services.NotificationReceiver;
 import com.parse.ParseObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -59,12 +58,8 @@ public class NewsAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-        Date d = objectList.get(position).getDate("date");
-        String myFormat = "dd MMMM yyyy";
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.UK);
-
-        final String heading = objectList.get(position).getString("heading");
-        String date = sdf.format(d);
+        final String heading = objectList.get(position).getString("heading").trim();
+        String date = objectList.get(position).getString("date").trim();
 
         ((MyViewHolder) holder).heading.setText(heading);
         ((MyViewHolder) holder).date.setText(date);
@@ -73,11 +68,11 @@ public class NewsAdapter extends RecyclerView.Adapter {
         ((MyViewHolder) holder).card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NewsImage newsImage = new NewsImage();
+                NewsWebView newsWebView = new NewsWebView();
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("parse_object", objectList.get(position));
-                newsImage.setArguments(bundle);
-                loadFragment(newsImage, "news_image");
+                newsWebView.setArguments(bundle);
+                loadFragment(newsWebView, "news_image");
             }
         });
 

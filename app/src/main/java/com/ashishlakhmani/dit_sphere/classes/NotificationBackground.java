@@ -43,7 +43,7 @@ public class NotificationBackground extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... params) {
 
-        String login_url = "https://lakhmanianita.000webhostapp.com/notification.php";
+        String login_url = "https://lakhmanianita.000webhostapp.com/dit_sphere/notification.php";
         try {
             String student_id = params[0];
             String message = params[1];

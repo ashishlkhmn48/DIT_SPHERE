@@ -120,7 +120,7 @@ public class News extends Fragment {
 
     private void pullNewsFeeds() {
         ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("News");
-        query.orderByDescending("date");
+        query.orderByDescending("createdAt");
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {

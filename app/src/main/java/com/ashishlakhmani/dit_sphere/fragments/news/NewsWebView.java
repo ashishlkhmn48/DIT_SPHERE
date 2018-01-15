@@ -1,7 +1,6 @@
 package com.ashishlakhmani.dit_sphere.fragments.news;
 
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,24 +9,24 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import com.ashishlakhmani.dit_sphere.R;
-import com.ashishlakhmani.dit_sphere.classes.DownloaderHelper;
-import com.ashishlakhmani.dit_sphere.classes.TouchImageView;
-import com.parse.ParseFile;
 import com.parse.ParseObject;
-import com.squareup.picasso.Picasso;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NewsImage extends Fragment {
+public class NewsWebView extends Fragment {
 
-    TouchImageView touchImageView;
+    private WebView webView;
     private ParseObject object;
-    private ProgressDialog dialog;
+    private ProgressBar progressBar;
 
-    public NewsImage() {
+    public NewsWebView() {
         // Required empty public constructor
     }
 
@@ -36,25 +35,30 @@ public class NewsImage extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_news_image, container, false);
+        View view = inflater.inflate(R.layout.fragment_news_web_view, container, false);
 
-        touchImageView = view.findViewById(R.id.news_image);
-        dialog = new ProgressDialog(getContext());
+        webView = view.findViewById(R.id.web_view);
 
         object = getArguments().getParcelable("parse_object");
-        if (object != null) {
-            String url = object.getParseFile("image").getUrl();
-            Picasso.with(getContext())
-                    .load(url)
-                    .placeholder(R.drawable.placeholder_album)
-                    .into(touchImageView);
-        }
+        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
 
-        touchImageView.setOnLongClickListener(new View.OnLongClickListener() {
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        webView.loadUrl(object.getString("url"));
+
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                progressBar.setVisibility(View.INVISIBLE);
+                super.onPageFinished(view, url);
+            }
+        });
+
+        webView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                registerForContextMenu(v);
-                getActivity().openContextMenu(v);
+                registerForContextMenu(webView);
+                getActivity().openContextMenu(webView);
                 return true;
             }
         });
@@ -63,32 +67,33 @@ public class NewsImage extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        unregisterForContextMenu(webView);
+    }
+
+    @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         menu.setHeaderTitle("Select The Action");
         menu.add(0, v.getId(), 0, "Share");
-        menu.add(0, v.getId(), 0, "Download");
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        if (item.getTitle().equals("Download")) {
-            DownloaderHelper downloaderHelper = new DownloaderHelper(getContext(), object, "image", "heading");
-            downloaderHelper.downloadTaskImage();
-        } else if (item.getTitle().equals("Share")) {
+        if (item.getTitle().equals("Share")) {
             shareTask();
         }
         return true;
     }
 
     private void shareTask() {
-        ParseFile file = (ParseFile) object.get("image");
-        String link = file.getUrl();
-        String heading = object.getString("heading");
+        String url = object.getString("url").trim();
+        String heading = object.getString("heading").trim();
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, heading);
-        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, heading + "\n\n" + link);
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, heading + "\n\n" + url);
         getContext().startActivity(Intent.createChooser(sharingIntent, "Share News Using"));
     }
 }
