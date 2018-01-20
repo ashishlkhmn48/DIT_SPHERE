@@ -1,12 +1,25 @@
 package com.ashishlakhmani.dit_sphere.classes;
 
 import android.app.Application;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseInstallation;
 
+import java.util.HashSet;
+import java.util.List;
+
 public class ParseConnect extends Application {
+
+    private BroadcastReceiver off_to_on;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -31,5 +44,48 @@ public class ParseConnect extends Application {
         defaultACL.setPublicReadAccess(true);
         defaultACL.setPublicWriteAccess(true);
         ParseACL.setDefaultACL(defaultACL, true);
+
+        off_to_on = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                offToOnTask();
+            }
+        };
+
+        registerReceiver(off_to_on, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
+
+    private void offToOnTask() {
+
+        if (isNetworkAvailable()) {
+
+            SharedPreferences sharedPreferences = getSharedPreferences("wait_table", Context.MODE_PRIVATE);
+            HashSet<String> set = new HashSet<>(sharedPreferences.getStringSet("set", new HashSet<String>()));
+
+            for (String object_id : set) {
+                /*  Debugging */
+                LocalChatDatabase chatDatabase = new LocalChatDatabase(this, object_id);
+                List<MessageObject> messageObjectList = chatDatabase.getWaitMessageObjects();
+
+                for (MessageObject messageObject : messageObjectList) {
+                    NotificationBackground background = new NotificationBackground(this, messageObject, true, messageObjectList.size());
+                    background.execute();
+                }
+            }
+        }
+
+    }
+
+    //To check if the network is available i.e Mobile n/w or wifi
+    private boolean isNetworkAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm != null) {
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            if (cm.isDefaultNetworkActive() && activeNetwork != null && activeNetwork.isConnected())
+                return true;
+        }
+        return false;
+    }
+
+
 }

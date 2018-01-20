@@ -43,7 +43,7 @@ public class NewsWebView extends Fragment {
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
 
         WebSettings webSettings = webView.getSettings();
-        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         webView.loadUrl(object.getString("url"));
 
         webView.setWebViewClient(new WebViewClient() {

@@ -112,7 +112,6 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-
     //Permission check
     public boolean checkAndRequestPermissions() {
         int readStoragePermission = ContextCompat.checkSelfPermission(this,
@@ -148,6 +147,7 @@ public class HomeActivity extends AppCompatActivity
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         progressDialog = new ProgressDialog(this);
+
     }
 
 
@@ -233,9 +233,7 @@ public class HomeActivity extends AppCompatActivity
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
-
         navigationHeaderTask();
-
     }
 
 
@@ -428,7 +426,7 @@ public class HomeActivity extends AppCompatActivity
                 break;
 
             case R.id.interact:
-                Intent intent = new Intent(this, InteractActivity.class);
+                Intent intent = new Intent(HomeActivity.this, InteractActivity.class);
                 startActivity(intent);
                 break;
 
@@ -493,5 +491,7 @@ public class HomeActivity extends AppCompatActivity
             return false;
         }
     }
+
+
 
 }

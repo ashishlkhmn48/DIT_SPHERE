@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ashishlakhmani.dit_sphere.R;
+import com.ashishlakhmani.dit_sphere.activities.ChatActivity;
 import com.ashishlakhmani.dit_sphere.classes.MessageObject;
 import com.ashishlakhmani.dit_sphere.classes.NotificationBackground;
 import com.parse.GetCallback;
@@ -63,20 +64,21 @@ public class ChatAdapter extends RecyclerView.Adapter {
         if (sendStatus.isEmpty()) {
             layoutParams.gravity = Gravity.LEFT;
             ((MyViewHolder) holder).bubble_layout.setLayoutParams(layoutParams);
+            ((MyViewHolder) holder).bubble_layout.setBackgroundResource(R.drawable.chat_style_left);
             ((MyViewHolder) holder).id.setText(student_id);
             ((MyViewHolder) holder).statusImage.setImageDrawable(null);
         } else {
 
             layoutParams.gravity = Gravity.RIGHT;
+            ((MyViewHolder) holder).bubble_layout.setLayoutParams(layoutParams);
+            ((MyViewHolder) holder).bubble_layout.setBackgroundResource(R.drawable.chat_style_right);
+            ((MyViewHolder) holder).id.setText("You");
+
             if (sendStatus.equals("wait")) {
-                ((MyViewHolder) holder).bubble_layout.setLayoutParams(layoutParams);
-                ((MyViewHolder) holder).id.setText("You");
                 ((MyViewHolder) holder).statusImage.setImageResource(R.drawable.wait);
                 NotificationBackground background = new NotificationBackground(context, ((MyViewHolder) holder).statusImage, messageObject);
-                background.execute(student_id, message, date);
+                background.execute(((ChatActivity)context).getHeading());
             } else {
-                ((MyViewHolder) holder).bubble_layout.setLayoutParams(layoutParams);
-                ((MyViewHolder) holder).id.setText("You");
                 ((MyViewHolder) holder).statusImage.setImageResource(R.drawable.success);
             }
 
@@ -116,11 +118,6 @@ public class ChatAdapter extends RecyclerView.Adapter {
                             } else {
                                 year += "th Year";
                             }
-
-                            String result = "Student ID : " + id +
-                                    "\nName : " + name +
-                                    "\nBranch : " + branch +
-                                    "\nYear : " + year;
 
                             final View view = ((Activity) context).getLayoutInflater().inflate(R.layout.layout_profile_alert, null);
                             TextView id_tv, name_tv, branch_tv, year_tv;

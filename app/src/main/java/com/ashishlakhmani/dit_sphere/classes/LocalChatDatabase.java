@@ -12,25 +12,27 @@ import java.util.List;
 
 public class LocalChatDatabase extends SQLiteOpenHelper {
 
+    Context context;
 
-    private static final int DATABASE_VERSION = 5;
-    private static final String DATABASE_NAME = "ChatStore";
-    private static final String TABLE_NAME = "chat";
+    private static final int DATABASE_VERSION = 1;
+    private static String DATABASE_NAME;
+    private static final String TABLE_NAME = "Chat";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_MESSAGE = "message";
     private static final String COLUMN_DATE = "date";
     private static final String COLUMN_SEND_STATUS = "status";
 
 
-    public LocalChatDatabase(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, DATABASE_NAME, factory, DATABASE_VERSION);
+    public LocalChatDatabase(Context context, String name) {
+        super(context, name, null, DATABASE_VERSION);
+        this.context = context;
+        DATABASE_NAME = name;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         String query = "CREATE TABLE " + TABLE_NAME + "(" + COLUMN_ID + " TEXT," + COLUMN_MESSAGE + " TEXT," +
                 COLUMN_DATE + " TEXT," + COLUMN_SEND_STATUS + " TEXT" + ")";
-
 
         db.execSQL(query);
     }
@@ -64,7 +66,7 @@ public class LocalChatDatabase extends SQLiteOpenHelper {
         cursor.moveToFirst();
 
         while (!cursor.isAfterLast()) {
-            MessageObject messageObject = new MessageObject(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3));
+            MessageObject messageObject = new MessageObject(DATABASE_NAME, cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3));
             list.add(messageObject);
             cursor.moveToNext();
         }
@@ -73,10 +75,10 @@ public class LocalChatDatabase extends SQLiteOpenHelper {
         return list;
     }
 
-    public void updateSendStatus(String date) {
-        ContentValues cv = new ContentValues();
-        cv.put(COLUMN_SEND_STATUS, "success");
+    public void updateSendStatus(String date, MessageObject messageObject) {
         SQLiteDatabase db = getReadableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_SEND_STATUS, messageObject.getSendStatus());
         db.update(TABLE_NAME, cv, COLUMN_DATE + " = ?",
                 new String[]{date});
     }
@@ -96,7 +98,7 @@ public class LocalChatDatabase extends SQLiteOpenHelper {
         cursor.moveToFirst();
 
         while (!cursor.isAfterLast()) {
-            MessageObject messageObject = new MessageObject(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3));
+            MessageObject messageObject = new MessageObject(DATABASE_NAME, cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3));
             list.add(messageObject);
             cursor.moveToNext();
         }

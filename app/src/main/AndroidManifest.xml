@@ -30,7 +30,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".activities.SplashScreenActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -45,17 +44,16 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan" />
-
         <activity
             android:name=".activities.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity android:name=".activities.InteractActivity" />
+        <activity android:name=".activities.ChatActivity" />
 
         <!-- Parse Push Notification Services and Receivers -->
         <meta-data
             android:name="com.parse.push.gcm_sender_id"
             android:value="id:746201752368" />
+
         <service android:name="com.parse.PushService" />
 
         <receiver
@@ -68,7 +66,6 @@
                 <category android:name="com.ashishlakhmani.dit_sphere" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name="com.parse.ParsePushBroadcastReceiver"
             android:exported="false">
@@ -78,7 +75,6 @@
                 <action android:name="com.parse.push.intent.DELETE" />
             </intent-filter>
         </receiver>
-
 
         <!-- Firebase Push Notification Services and Receivers -->
         <meta-data
@@ -103,10 +99,8 @@
             </intent-filter>
         </service>
 
-
         <!-- Receiver which responds to personal alarms -->
         <receiver android:name=".services.NotificationReceiver" />
-
 
         <!-- Receiver which responds network change -->
         <receiver
@@ -114,10 +108,13 @@
             android:exported="false">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                <action android:name="W" />
             </intent-filter>
         </receiver>
 
+        <activity
+            android:name=".activities.InteractActivity"
+            android:label="@string/title_activity_interact"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
