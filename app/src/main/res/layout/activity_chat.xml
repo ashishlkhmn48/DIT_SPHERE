@@ -147,8 +147,6 @@
                 app:srcCompat="@drawable/send" />
         </LinearLayout>
 
-
     </RelativeLayout>
-
 
 </android.support.constraint.ConstraintLayout>

@@ -243,11 +243,10 @@ public class FollowedThread extends Fragment {
                                             floating_action_delete_button.setVisibility(View.VISIBLE);
                                             heading = input.getText().toString().trim();
                                             Toast.makeText(getContext(), "Your Conversation Thread Started", Toast.LENGTH_LONG).show();
-                                            progressDialog.dismiss();
                                         } else {
-                                            progressDialog.dismiss();
                                             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
+                                        progressDialog.dismiss();
                                     }
                                 });
 

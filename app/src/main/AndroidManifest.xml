@@ -103,13 +103,6 @@
         <receiver android:name=".services.NotificationReceiver" />
 
         <!-- Receiver which responds network change -->
-        <receiver
-            android:name=".services.NetworkMonitor"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
 
         <activity
             android:name=".activities.InteractActivity"
