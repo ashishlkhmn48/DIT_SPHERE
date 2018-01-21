@@ -110,7 +110,7 @@ public class ChatActivity extends AppCompatActivity {
                         AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
                         builder.setCancelable(false);
                         builder.setTitle("Connected Users");
-                        builder.setMessage("\nTotal Users : " + connected_users);
+                        builder.setMessage("\nTotal Users : " + connected_users.length);
                         builder.setIcon(R.drawable.interact_3);
                         View view = getLayoutInflater().inflate(R.layout.layout_connected_users, null);
                         ListView listView = view.findViewById(R.id.connected_users_list);

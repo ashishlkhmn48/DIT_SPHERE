@@ -66,15 +66,8 @@ public class FollowedThread extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_followed_group, container, false);
+        View view = inflater.inflate(R.layout.fragment_followed_thread, container, false);
         initialize(view);
-
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                followedTask();
-            }
-        });
 
         followedTask();
         floatingActionButtonClickTask();
@@ -110,6 +103,13 @@ public class FollowedThread extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                followedTask();
+            }
+        });
+
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -144,6 +144,8 @@ public class FollowedThread extends Fragment {
                         progressBar.setVisibility(View.INVISIBLE);
                         floatingActionButton.setVisibility(View.VISIBLE);
                         floatingActionButton.setImageResource(R.drawable.add);
+
+                        recyclerView.setVisibility(View.INVISIBLE);
                     } else {
 
                         ParseQuery<ParseObject> innerQuery = new ParseQuery<ParseObject>("Threads");
@@ -155,6 +157,7 @@ public class FollowedThread extends Fragment {
                                 if (swipeRefreshLayout.isRefreshing()) {
                                     swipeRefreshLayout.setRefreshing(false);
                                 }
+                                recyclerView.setVisibility(View.VISIBLE);
 
                                 FollowedThreadAdapter adapter = new FollowedThreadAdapter(getContext(), objects, no_followed);
                                 recyclerView.setAdapter(adapter);
@@ -227,7 +230,7 @@ public class FollowedThread extends Fragment {
                                 String id = sharedPreferences.getString("id", "");
                                 String branch = sharedPreferences.getString("branch", "");
 
-                                ParseObject object = new ParseObject("Threads");
+                                final ParseObject object = new ParseObject("Threads");
                                 object.put("from_id", id);
                                 object.put("heading", input.getText().toString().trim());
                                 object.put("branch", branch);
@@ -242,6 +245,7 @@ public class FollowedThread extends Fragment {
                                             floatingActionButton.setImageResource(R.drawable.interact_2);
                                             floating_action_delete_button.setVisibility(View.VISIBLE);
                                             heading = input.getText().toString().trim();
+                                            objectID = object.getObjectId();
                                             Toast.makeText(getContext(), "Your Conversation Thread Started", Toast.LENGTH_LONG).show();
                                         } else {
                                             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -287,7 +291,7 @@ public class FollowedThread extends Fragment {
                 }
                 Tooltip.make(getContext(),
                         new Tooltip.Builder(101)
-                                .anchor(floatingActionButton, Tooltip.Gravity.LEFT)
+                                .anchor(floatingActionButton, Tooltip.Gravity.TOP)
                                 .closePolicy(new Tooltip.ClosePolicy()
                                         .insidePolicy(true, false)
                                         .outsidePolicy(true, false), 2500)
@@ -380,7 +384,7 @@ public class FollowedThread extends Fragment {
 
                 Tooltip.make(getContext(),
                         new Tooltip.Builder(101)
-                                .anchor(floating_action_delete_button, Tooltip.Gravity.LEFT)
+                                .anchor(floating_action_delete_button, Tooltip.Gravity.TOP)
                                 .closePolicy(new Tooltip.ClosePolicy()
                                         .insidePolicy(true, false)
                                         .outsidePolicy(true, false), 2500)

@@ -163,11 +163,13 @@ public class LoginActivity extends AppCompatActivity {
                                     insertToDatabase.execute(id.getText().toString().trim(), fcm_token, new Date().toString());
 
                                 } else {
+                                    dialog.dismiss();
                                     Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
                     } else {
+                        dialog.dismiss();
                         if (e.getCode() == ParseException.CONNECTION_FAILED)
                             Toast.makeText(LoginActivity.this, "Check Internet Connection", Toast.LENGTH_SHORT).show();
                         else

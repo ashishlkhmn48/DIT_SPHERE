@@ -42,23 +42,13 @@ public class OthersThread extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_others_group, container, false);
+        View view = inflater.inflate(R.layout.fragment_others_thread, container, false);
         initialize(view);
-
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                otherTask();
-            }
-        });
-
         otherTask();
-
         return view;
     }
 
@@ -76,7 +66,15 @@ public class OthersThread extends Fragment {
 
 
     private void initialize(View view) {
+
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                otherTask();
+            }
+        });
+
         recyclerView = view.findViewById(R.id.others_recycler_view);
         no_others = view.findViewById(R.id.no_others);
         progressBar = view.findViewById(R.id.progressBar);
@@ -91,6 +89,7 @@ public class OthersThread extends Fragment {
                 otherTask();
             }
         };
+
     }
 
     public void otherTask() {
@@ -114,10 +113,12 @@ public class OthersThread extends Fragment {
 
                     if (objects.isEmpty()) {
                         no_others.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.INVISIBLE);
                     } else {
+                        recyclerView.setVisibility(View.VISIBLE);
+                        no_others.setVisibility(View.INVISIBLE);
                         OthersThreadAdapter adapter = new OthersThreadAdapter(getContext(), objects, no_others);
                         recyclerView.setAdapter(adapter);
-                        no_others.setVisibility(View.INVISIBLE);
                     }
 
                 } else {
