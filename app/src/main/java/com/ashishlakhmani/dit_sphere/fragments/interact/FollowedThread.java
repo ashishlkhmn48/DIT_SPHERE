@@ -130,6 +130,7 @@ public class FollowedThread extends Fragment {
         query.whereEqualTo("connected_id", id);
         query.whereNotEqualTo("from_id", id);
 
+
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(final List<ParseObject> objects, ParseException e) {
@@ -137,15 +138,38 @@ public class FollowedThread extends Fragment {
                 if (e == null) {
 
                     if (objects.isEmpty()) {
-                        no_followed.setVisibility(View.VISIBLE);
-                        if (swipeRefreshLayout.isRefreshing()) {
-                            swipeRefreshLayout.setRefreshing(false);
-                        }
-                        progressBar.setVisibility(View.INVISIBLE);
-                        floatingActionButton.setVisibility(View.VISIBLE);
-                        floatingActionButton.setImageResource(R.drawable.add);
 
-                        recyclerView.setVisibility(View.INVISIBLE);
+                        ParseQuery<ParseObject> innerQuery = new ParseQuery<ParseObject>("Threads");
+                        innerQuery.whereEqualTo("from_id", id);
+                        innerQuery.getFirstInBackground(new GetCallback<ParseObject>() {
+                            @Override
+                            public void done(ParseObject object, ParseException e) {
+                                progressBar.setVisibility(View.INVISIBLE);
+                                if (swipeRefreshLayout.isRefreshing()) {
+                                    swipeRefreshLayout.setRefreshing(false);
+                                }
+                                recyclerView.setVisibility(View.INVISIBLE);
+                                no_followed.setVisibility(View.VISIBLE);
+
+                                floatingActionButton.setVisibility(View.VISIBLE);
+                                floatingActionButton.setImageResource(R.drawable.add);
+
+                                if (e == null) {
+                                    if (object != null) {
+                                        isThreadCreated = true;
+                                        objectID = object.getObjectId();
+                                        heading = object.getString("heading").toUpperCase();
+
+                                        floatingActionButton.setImageResource(R.drawable.interact_2);
+                                        floating_action_delete_button.setVisibility(View.VISIBLE);
+                                    }
+                                } else {
+                                    isThreadCreated = false;
+                                    floatingActionButton.setImageResource(R.drawable.add);
+                                    floating_action_delete_button.setVisibility(View.INVISIBLE);
+                                }
+                            }
+                        });
                     } else {
 
                         ParseQuery<ParseObject> innerQuery = new ParseQuery<ParseObject>("Threads");
@@ -253,7 +277,6 @@ public class FollowedThread extends Fragment {
                                         progressDialog.dismiss();
                                     }
                                 });
-
                             } else {
                                 if (input.getText().toString().trim().length() > 20) {
                                     Toast.makeText(getContext(), "Letter Limit Exceeded.", Toast.LENGTH_SHORT).show();
@@ -261,7 +284,6 @@ public class FollowedThread extends Fragment {
                             }
                         }
                     });
-
 
                     builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
                         @Override
