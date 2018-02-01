@@ -38,7 +38,7 @@ public class About extends Fragment {
         fb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String YourPageURL = "https://www.facebook.com/n/?dityouthopia2016";
+                String YourPageURL = "https://www.facebook.com/n/?";
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(YourPageURL));
                 startActivity(browserIntent);
             }

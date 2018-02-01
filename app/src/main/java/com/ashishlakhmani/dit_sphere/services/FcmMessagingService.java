@@ -37,7 +37,11 @@ public class FcmMessagingService extends FirebaseMessagingService {
         String id = remoteMessage.getData().get("student_id");
         String message = remoteMessage.getData().get("message");
         String date = remoteMessage.getData().get("date");
+
+        //For messages
         String head = remoteMessage.getData().get("head");
+
+        //For News
         String heading = remoteMessage.getData().get("heading");
 
         Random random = new Random();
@@ -60,7 +64,7 @@ public class FcmMessagingService extends FirebaseMessagingService {
                 Log.i("Exception", output);
 
                 LocalChatDatabase chatDatabase = new LocalChatDatabase(this, object_id);
-                MessageObject messageObject = new MessageObject(object_id, id, output, date, "");
+                MessageObject messageObject = new MessageObject(object_id, id, output, date, head,"");
                 chatDatabase.addUserDetails(messageObject);
 
                 Log.i("Exception", "Read Success");
@@ -81,6 +85,7 @@ public class FcmMessagingService extends FirebaseMessagingService {
     private void notifyForNews(NotificationCompat.Builder notification, int num, String heading) {
         notification.setSmallIcon(R.drawable.sphere_2);
         notification.setContentTitle("DIT - News");
+        notification.setSubText("News");
         notification.setStyle(new android.support.v4.app.NotificationCompat.BigTextStyle(notification).bigText(heading.trim()));
 
         Intent intent = new Intent(this, HomeActivity.class);

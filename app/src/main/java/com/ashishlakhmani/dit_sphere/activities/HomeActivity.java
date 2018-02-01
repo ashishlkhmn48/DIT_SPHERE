@@ -37,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ashishlakhmani.dit_sphere.R;
+import com.ashishlakhmani.dit_sphere.classes.DeleteData;
 import com.ashishlakhmani.dit_sphere.classes.InsertToDatabase;
 import com.ashishlakhmani.dit_sphere.fragments.About;
 import com.ashishlakhmani.dit_sphere.fragments.Calculator;
@@ -49,12 +50,10 @@ import com.ashishlakhmani.dit_sphere.fragments.Result;
 import com.ashishlakhmani.dit_sphere.fragments.Syllabus;
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
-import com.parse.LogOutCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -76,6 +75,11 @@ public class HomeActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        SharedPreferences sp = getSharedPreferences("interact_activity", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean("isOpen", false);
+        editor.apply();
 
         putFcmToServer();
         initialize();
@@ -325,29 +329,9 @@ public class HomeActivity extends AppCompatActivity
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        progressDialog.setCancelable(false);
-                        progressDialog.setTitle("DIT - SPHERE");
-                        progressDialog.setMessage("Logging Out..");
-                        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                        progressDialog.show();
-                        ParseUser.logOutInBackground(new LogOutCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if (e == null) {
-                                    SharedPreferences sp = getSharedPreferences("login", MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = sp.edit();
-                                    editor.clear();
-                                    editor.apply();
-
-                                    progressDialog.dismiss();
-                                    Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
-                                    startActivity(intent);
-                                    finish();
-                                } else {
-                                    Toast.makeText(HomeActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                        SharedPreferences sp = getSharedPreferences("login", MODE_PRIVATE);
+                        DeleteData deleteData = new DeleteData(HomeActivity.this);
+                        deleteData.execute(sp.getString("id", ""));
                     }
                 });
 
@@ -491,7 +475,6 @@ public class HomeActivity extends AppCompatActivity
             return false;
         }
     }
-
 
 
 }

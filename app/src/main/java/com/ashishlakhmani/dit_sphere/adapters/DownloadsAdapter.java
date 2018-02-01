@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.FileProvider;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -46,6 +48,16 @@ public class DownloadsAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         ((MyViewHolder) holder).name.setText(file_list.get(position).getName());
         ((MyViewHolder) holder).path.setText(file_list.get(position).getParent());
+
+        ((MyViewHolder) holder).card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri file_uri = FileProvider.getUriForFile(context, "com.ashishlakhmani.dit_sphere.provider", new File(file_list.get(position).getAbsolutePath()));
+                Intent intent = new Intent(Intent.ACTION_VIEW, file_uri);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                context.startActivity(intent);
+            }
+        });
 
         ((MyViewHolder) holder).overflow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,12 +133,14 @@ public class DownloadsAdapter extends RecyclerView.Adapter {
     private class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView overflow;
         TextView name, path;
+        CardView card;
 
         private MyViewHolder(View itemView) {
             super(itemView);
             overflow = itemView.findViewById(R.id.overflow);
             name = itemView.findViewById(R.id.name);
             path = itemView.findViewById(R.id.path);
+            card = itemView.findViewById(R.id.card);
         }
     }
 

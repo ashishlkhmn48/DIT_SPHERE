@@ -126,18 +126,33 @@
             android:orientation="horizontal"
             android:paddingBottom="2dp">
 
+            <ImageView
+                android:id="@+id/attach"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical|start"
+                android:layout_marginStart="2dp"
+                android:onClick="onAttach"
+                app:srcCompat="@drawable/attach" />
 
-            <EditText
-                android:id="@+id/messageEditText"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"
-                android:layout_weight="0.72"
-                android:hint="Message"
-                android:maxHeight="80dp"
-                android:maxLines="3" />
+                android:layout_weight="0.72">
+
+                <EditText
+                    android:id="@+id/messageEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Message"
+                    android:maxHeight="80dp"
+                    android:maxLines="3" />
+
+            </android.support.design.widget.TextInputLayout>
+
 
             <ImageView
+                android:id="@+id/send"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_gravity="center_vertical|center_horizontal"

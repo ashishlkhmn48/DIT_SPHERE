@@ -20,6 +20,7 @@ public class LocalChatDatabase extends SQLiteOpenHelper {
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_MESSAGE = "message";
     private static final String COLUMN_DATE = "date";
+    private static final String COLUMN_HEADING = "heading";
     private static final String COLUMN_SEND_STATUS = "status";
 
 
@@ -32,7 +33,7 @@ public class LocalChatDatabase extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String query = "CREATE TABLE " + TABLE_NAME + "(" + COLUMN_ID + " TEXT," + COLUMN_MESSAGE + " TEXT," +
-                COLUMN_DATE + " TEXT," + COLUMN_SEND_STATUS + " TEXT" + ")";
+                COLUMN_DATE + " TEXT," + COLUMN_HEADING + " TEXT," + COLUMN_SEND_STATUS + " TEXT" + ")";
 
         db.execSQL(query);
     }
@@ -50,6 +51,7 @@ public class LocalChatDatabase extends SQLiteOpenHelper {
         cv.put(COLUMN_ID, messageObject.getStudent_id());
         cv.put(COLUMN_MESSAGE, messageObject.getMessage());
         cv.put(COLUMN_DATE, messageObject.getDate());
+        cv.put(COLUMN_HEADING, messageObject.getHeading());
         cv.put(COLUMN_SEND_STATUS, messageObject.getSendStatus());
         db.insert(TABLE_NAME, null, cv);
         db.close();
@@ -66,7 +68,7 @@ public class LocalChatDatabase extends SQLiteOpenHelper {
         cursor.moveToFirst();
 
         while (!cursor.isAfterLast()) {
-            MessageObject messageObject = new MessageObject(DATABASE_NAME, cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3));
+            MessageObject messageObject = new MessageObject(DATABASE_NAME, cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
             list.add(messageObject);
             cursor.moveToNext();
         }
@@ -98,7 +100,7 @@ public class LocalChatDatabase extends SQLiteOpenHelper {
         cursor.moveToFirst();
 
         while (!cursor.isAfterLast()) {
-            MessageObject messageObject = new MessageObject(DATABASE_NAME, cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3));
+            MessageObject messageObject = new MessageObject(DATABASE_NAME, cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4));
             list.add(messageObject);
             cursor.moveToNext();
         }

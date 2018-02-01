@@ -117,7 +117,7 @@ public class FollowedThreadAdapter extends RecyclerView.Adapter {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setTitle("Exit from Conversation");
-        builder.setMessage("You will not get Notifications.\nDo you still want to Continue ?");
+        builder.setMessage("You will not get Notifications.\n\nDo you still want to Continue ?");
 
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
@@ -144,7 +144,7 @@ public class FollowedThreadAdapter extends RecyclerView.Adapter {
                             Intent intent = new Intent("UPDATE_OTHERS");
                             context.sendBroadcast(intent);
 
-                            context.deleteDatabase(object.getObjectId());
+                            //context.deleteDatabase(object.getObjectId());
 
                             if (objectList.isEmpty()) {
                                 no_followed.setVisibility(View.VISIBLE);

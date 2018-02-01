@@ -63,13 +63,12 @@ public class ParseConnect extends Application {
             HashSet<String> set = new HashSet<>(sharedPreferences.getStringSet("set", new HashSet<String>()));
 
             for (String object_id : set) {
-                /*  Debugging */
                 LocalChatDatabase chatDatabase = new LocalChatDatabase(this, object_id);
                 List<MessageObject> messageObjectList = chatDatabase.getWaitMessageObjects();
 
                 for (MessageObject messageObject : messageObjectList) {
-                    NotificationBackground background = new NotificationBackground(this, messageObject, true, messageObjectList.size());
-                    background.execute();
+                    NotificationBackground background = new NotificationBackground(this, messageObject, true);
+                    background.execute(messageObject.getHeading());
                 }
             }
         }

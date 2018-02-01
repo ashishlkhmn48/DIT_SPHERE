@@ -13,12 +13,15 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.provider.MediaStore;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,6 +46,8 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -60,8 +65,11 @@ public class ChatActivity extends AppCompatActivity {
     private ArrayList<MessageObject> messageObjectList = new ArrayList<>();
     private ChatAdapter adapter;
 
+    private Uri path;
+    private Bitmap img;
+
     private String object_id;
-    private int num_connected_users;
+    private static final int img_requestCode = 13;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -301,7 +309,6 @@ public class ChatActivity extends AppCompatActivity {
         super.onDestroy();
         SharedPreferences sp = getSharedPreferences("interact_activity", MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-        editor.clear();
         editor.putBoolean("isOpen", false);
         editor.apply();
     }
@@ -347,17 +354,6 @@ public class ChatActivity extends AppCompatActivity {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Threads");
-                query.getInBackground(object_id, new GetCallback<ParseObject>() {
-                    @Override
-                    public void done(ParseObject object, ParseException e) {
-                        if (e == null) {
-                            num_connected_users = object.getList("connected_id").size();
-                        } else {
-                            Toast.makeText(ChatActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
                 loadMessages();
             }
         };
@@ -376,7 +372,7 @@ public class ChatActivity extends AppCompatActivity {
             final Date currentDateTime = new Date();
 
             //Inserting To Local Database
-            MessageObject messageObject = new MessageObject(object_id, student_id, message, currentDateTime.toString(), "wait");
+            MessageObject messageObject = new MessageObject(object_id, student_id, message, currentDateTime.toString(), getHeading(), "wait");
             messageObjectList.add(messageObject);
             chatDatabase.addUserDetails(messageObject);
             adapter.notifyItemInserted(messageObjectList.size() - 1);
@@ -402,6 +398,49 @@ public class ChatActivity extends AppCompatActivity {
             sorryImage.setVisibility(View.INVISIBLE);
             chatListRecyclerView.smoothScrollToPosition(messageObjectList.size() - 1);
         }
+    }
+
+
+    public void onAttach(View view) {
+
+        Toast.makeText(this, "Please Select a Square Image.", Toast.LENGTH_LONG).show();
+        Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        getIntent.setType("image/*");
+
+        Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        pickIntent.setType("image/*");
+
+        Intent chooserIntent = Intent.createChooser(getIntent, "Select Image");
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
+
+        startActivityForResult(chooserIntent, img_requestCode);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == img_requestCode && resultCode == RESULT_OK && data != null) {
+            path = data.getData();
+            if (path != null)
+                Toast.makeText(this, path.toString(), Toast.LENGTH_SHORT).show();
+            try {
+                img = MediaStore.Images.Media.getBitmap(getContentResolver(), path);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private String imgToString() {
+        if (img != null) {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            img.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+            byte[] arr = byteArrayOutputStream.toByteArray();
+            return Base64.encodeToString(arr, Base64.DEFAULT);
+        }
+        return "";
     }
 
     public String getHeading() {

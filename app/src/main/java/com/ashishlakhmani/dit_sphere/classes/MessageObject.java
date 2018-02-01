@@ -7,13 +7,16 @@ public class MessageObject {
     private String student_id;
     private String message;
     private String date;
+    private String heading;
     private String sendStatus;
 
-    public MessageObject(String object_id, String student_id, String message, String date, String sendStatus) {
+
+    public MessageObject(String object_id, String student_id, String message, String date, String heading, String sendStatus) {
         this.object_id = object_id;
         this.student_id = student_id;
         this.message = message;
         this.date = date;
+        this.heading = heading;
         this.sendStatus = sendStatus;
     }
 
@@ -31,6 +34,10 @@ public class MessageObject {
 
     public String getDate() {
         return date;
+    }
+
+    public String getHeading() {
+        return heading;
     }
 
     public String getSendStatus() {

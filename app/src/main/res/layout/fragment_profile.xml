@@ -121,7 +121,8 @@
                         android:id="@+id/dob"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:maxLines="1" />
+                        android:maxLines="1"
+                        android:paddingRight="35dp" />
 
                 </android.support.design.widget.TextInputLayout>
 

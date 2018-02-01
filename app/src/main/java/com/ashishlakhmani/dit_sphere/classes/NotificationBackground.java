@@ -1,7 +1,6 @@
 package com.ashishlakhmani.dit_sphere.classes;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -34,7 +33,6 @@ public class NotificationBackground extends AsyncTask<String, Void, String> {
 
     //Used for Network Monitor Offine-to-Online purpose.
     private boolean fromBackground = false;
-    private int size;
 
     public NotificationBackground(Context context, ImageView imageView, MessageObject messageObject) {
         this.context = context;
@@ -42,11 +40,10 @@ public class NotificationBackground extends AsyncTask<String, Void, String> {
         this.messageObject = messageObject;
     }
 
-    public NotificationBackground(Context context, MessageObject messageObject, boolean fromBackground, int size) {
+    public NotificationBackground(Context context, MessageObject messageObject, boolean fromBackground) {
         this.context = context;
         this.messageObject = messageObject;
         this.fromBackground = fromBackground;
-        this.size = size;
     }
 
     @Override
@@ -112,18 +109,15 @@ public class NotificationBackground extends AsyncTask<String, Void, String> {
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         if (result.equals("success")) {
-            count++;
             messageObject.setSendStatus("success");
             String date = messageObject.getDate();
             chatDatabase.updateSendStatus(date, messageObject);
-            context.sendBroadcast(new Intent("UPDATE_UI_ONLINE_OFFLINE"));
 
-            if (count == size) {
+            if (fromBackground) {
                 HashSet<String> set = new HashSet<>(sharedPreferences.getStringSet("set", new HashSet<String>()));
                 set.remove(messageObject.getObject_id());
                 editor.putStringSet("set", set);
                 editor.apply();
-                count = 0;
             }
 
             Log.i("Status", "Message Sent to all from background.");
@@ -145,7 +139,6 @@ public class NotificationBackground extends AsyncTask<String, Void, String> {
             String date = messageObject.getDate();
             chatDatabase.updateSendStatus(date, messageObject);
             imageView.setImageResource(R.drawable.success);
-            context.sendBroadcast(new Intent("UPDATE_UI_ONLINE_OFFLINE"));
             Log.i("Status", "Message Sent to all.");
         } else {
             HashSet<String> set = new HashSet<>(sharedPreferences.getStringSet("set", new HashSet<String>()));

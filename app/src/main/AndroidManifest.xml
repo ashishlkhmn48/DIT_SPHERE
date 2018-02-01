@@ -102,12 +102,22 @@
         <!-- Receiver which responds to personal alarms -->
         <receiver android:name=".services.NotificationReceiver" />
 
-        <!-- Receiver which responds network change -->
-
         <activity
             android:name=".activities.InteractActivity"
             android:label="@string/title_activity_interact"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <!-- To access files from other apps if(SDK >= 24) -->
+        <provider
+            android:name=".classes.GenericFileProvider"
+            android:authorities="com.ashishlakhmani.dit_sphere.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
+
     </application>
 
 </manifest>

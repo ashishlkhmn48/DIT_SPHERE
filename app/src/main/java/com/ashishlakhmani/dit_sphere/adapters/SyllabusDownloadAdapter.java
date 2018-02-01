@@ -85,13 +85,13 @@ public class SyllabusDownloadAdapter extends RecyclerView.Adapter {
         dialog.show();
 
         ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Syllabus");
-        query.whereEqualTo("branch", branch[position]);
+        query.whereContains("branch", branch[position]);
         query.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(final ParseObject object, ParseException e) {
                 if (e == null) {
                     dialog.dismiss();
-                    downloadPdf(object, "file", "branch");
+                    downloadPdf(object, "branch", "file");
                 } else {
                     dialog.dismiss();
                     Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -130,7 +130,7 @@ public class SyllabusDownloadAdapter extends RecyclerView.Adapter {
                                     alertDialogTask("Status", "File Already Exists at " + myFile.getAbsolutePath());
                                 }
                             } catch (Exception e1) {
-                                Toast.makeText(context, e1.getMessage(), Toast.LENGTH_SHORT).show();
+                                alertDialogTask("Status", e1.getMessage());
                                 dialog.dismiss();
                             }
                         } else {
