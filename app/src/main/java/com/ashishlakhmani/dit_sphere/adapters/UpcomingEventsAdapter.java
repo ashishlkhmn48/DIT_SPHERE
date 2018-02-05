@@ -1,5 +1,6 @@
 package com.ashishlakhmani.dit_sphere.adapters;
 
+
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
@@ -25,7 +26,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.ashishlakhmani.dit_sphere.R;
-import com.ashishlakhmani.dit_sphere.activities.HomeActivity;
+import com.ashishlakhmani.dit_sphere.activities.UpcomingEventsActivity;
 import com.ashishlakhmani.dit_sphere.fragments.news.NewsWebView;
 import com.ashishlakhmani.dit_sphere.services.NotificationReceiver;
 import com.parse.ParseObject;
@@ -38,14 +39,14 @@ import java.util.Random;
 
 import static android.content.Context.ALARM_SERVICE;
 
-public class NewsAdapter extends RecyclerView.Adapter {
+public class UpcomingEventsAdapter extends RecyclerView.Adapter {
 
     private Context context;
 
     private Calendar myCalendar = Calendar.getInstance();
     private List<ParseObject> objectList;
 
-    public NewsAdapter(Context context, List<ParseObject> objectList) {
+    public UpcomingEventsAdapter(Context context, List<ParseObject> objectList) {
         this.context = context;
         this.objectList = objectList;
     }
@@ -53,7 +54,7 @@ public class NewsAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_news, parent, false);
-        return new NewsAdapter.MyViewHolder(view);
+        return new UpcomingEventsAdapter.MyViewHolder(view);
     }
 
     @Override
@@ -61,11 +62,11 @@ public class NewsAdapter extends RecyclerView.Adapter {
         final String heading = objectList.get(position).getString("heading").trim();
         String date = objectList.get(position).getString("date").trim();
 
-        ((MyViewHolder) holder).heading.setText(heading);
-        ((MyViewHolder) holder).date.setText(date);
-        ((MyViewHolder) holder).sno.setText(String.valueOf(position + 1) + ".)");
+        ((UpcomingEventsAdapter.MyViewHolder) holder).heading.setText(heading);
+        ((UpcomingEventsAdapter.MyViewHolder) holder).date.setText(date);
+        ((UpcomingEventsAdapter.MyViewHolder) holder).sno.setText(String.valueOf(position + 1) + ".)");
 
-        ((MyViewHolder) holder).card.setOnClickListener(new View.OnClickListener() {
+        ((UpcomingEventsAdapter.MyViewHolder) holder).card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 NewsWebView newsWebView = new NewsWebView();
@@ -79,16 +80,16 @@ public class NewsAdapter extends RecyclerView.Adapter {
         SharedPreferences sp = context.getSharedPreferences("notification", Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = sp.edit();
         if (sp.contains(objectList.get(position).getObjectId())) {
-            ((MyViewHolder) holder).notification.setChecked(true);
+            ((UpcomingEventsAdapter.MyViewHolder) holder).notification.setChecked(true);
         } else {
-            ((MyViewHolder) holder).notification.setChecked(false);
+            ((UpcomingEventsAdapter.MyViewHolder) holder).notification.setChecked(false);
         }
 
-        ((MyViewHolder) holder).notification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        ((UpcomingEventsAdapter.MyViewHolder) holder).notification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    dateTimeTask(heading, objectList.get(position).getObjectId(), ((MyViewHolder) holder).notification);
+                    dateTimeTask(heading, objectList.get(position).getObjectId(), ((UpcomingEventsAdapter.MyViewHolder) holder).notification);
                 } else {
                     Toast.makeText(context, "Alarm Cancelled.", Toast.LENGTH_SHORT).show();
                     editor.remove(objectList.get(position).getObjectId());
@@ -96,7 +97,6 @@ public class NewsAdapter extends RecyclerView.Adapter {
                 }
             }
         });
-
     }
 
     @Override
@@ -121,8 +121,8 @@ public class NewsAdapter extends RecyclerView.Adapter {
 
     //Load fragment
     public void loadFragment(Fragment fragment, String TAG) {
-        HomeActivity homeActivity = (HomeActivity) context;
-        FragmentManager fragmentManager = homeActivity.getSupportFragmentManager();
+        UpcomingEventsActivity upcomingEventsActivity = (UpcomingEventsActivity) context;
+        FragmentManager fragmentManager = upcomingEventsActivity.getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         fragmentTransaction.replace(R.id.content, fragment, TAG);
@@ -182,8 +182,8 @@ public class NewsAdapter extends RecyclerView.Adapter {
         Intent intent = new Intent(context, NotificationReceiver.class);
         intent.putExtra("heading", heading.trim());
         intent.putExtra("objectId", objectId);
-        intent.putExtra("activity_name", "com.ashishlakhmani.dit_sphere.activities.HomeActivity");
-        intent.putExtra("title", "DIT-News");
+        intent.putExtra("activity_name", "com.ashishlakhmani.dit_sphere.activities.UpcomingEventsActivity");
+        intent.putExtra("title", "Upcoming Events");
         PendingIntent pendingIntent1 = PendingIntent.getBroadcast(context, num, intent, 0);
         AlarmManager alarmManager1 = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         if (alarmManager1 != null) {
@@ -195,6 +195,5 @@ public class NewsAdapter extends RecyclerView.Adapter {
         editor.putBoolean(objectId, true);
         editor.apply();
     }
-
 
 }

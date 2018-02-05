@@ -41,6 +41,7 @@ import com.ashishlakhmani.dit_sphere.classes.DeleteData;
 import com.ashishlakhmani.dit_sphere.classes.InsertToDatabase;
 import com.ashishlakhmani.dit_sphere.fragments.About;
 import com.ashishlakhmani.dit_sphere.fragments.Calculator;
+import com.ashishlakhmani.dit_sphere.fragments.Club;
 import com.ashishlakhmani.dit_sphere.fragments.CommonImageFragment;
 import com.ashishlakhmani.dit_sphere.fragments.Downloads;
 import com.ashishlakhmani.dit_sphere.fragments.Help;
@@ -439,6 +440,19 @@ public class HomeActivity extends AppCompatActivity
                     Downloads downloads = new Downloads();
                     loadFragmentForDrawer(downloads, "downloads");
                 }
+                break;
+
+            case R.id.upcoming:
+                Intent i = new Intent(this, UpcomingEventsActivity.class);
+                startActivity(i);
+                break;
+
+            case R.id.clubs:
+                if(!isFragmentVisible("club")) {
+                    Club club = new Club();
+                    loadFragmentForDrawer(club,"club");
+                }
+                break;
         }
 
         drawer.closeDrawer(GravityCompat.START);

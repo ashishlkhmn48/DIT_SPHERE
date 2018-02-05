@@ -13,15 +13,15 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.provider.MediaStore;
+import android.speech.RecognizerIntent;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Base64;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,8 +46,6 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,18 +56,17 @@ public class ChatActivity extends AppCompatActivity {
     private RecyclerView chatListRecyclerView;
     private EditText msg;
     private TextView sorryText;
-    private ImageView sorryImage;
+    private ImageView sorryImage, send;
 
 
     private BroadcastReceiver broadcastReceiver;
     private ArrayList<MessageObject> messageObjectList = new ArrayList<>();
     private ChatAdapter adapter;
 
-    private Uri path;
-    private Bitmap img;
+    private static final int speechCode = 6988;
 
     private String object_id;
-    private static final int img_requestCode = 13;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +79,31 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         initialize();
+
+        msg.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().trim().length() > 0) {
+                    send.setImageResource(R.drawable.send);
+                } else {
+                    send.setImageResource(R.drawable.mic);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         loadMessages();
+
+
     }
 
 
@@ -288,7 +309,6 @@ public class ChatActivity extends AppCompatActivity {
         setTitle(getIntent().getStringExtra("heading"));
 
         registerReceiver(broadcastReceiver, new IntentFilter("UPDATE_UI"));
-
     }
 
     @Override
@@ -300,7 +320,6 @@ public class ChatActivity extends AppCompatActivity {
         editor.putBoolean("isOpen", false);
         editor.apply();
         unregisterReceiver(broadcastReceiver);
-
     }
 
 
@@ -321,6 +340,7 @@ public class ChatActivity extends AppCompatActivity {
         msg = findViewById(R.id.messageEditText);
         sorryText = findViewById(R.id.sorryText);
         sorryImage = findViewById(R.id.sorryImage);
+        send = findViewById(R.id.send);
 
         chatListRecyclerView = findViewById(R.id.msg_recycler_view);
         adapter = new ChatAdapter(this, messageObjectList);
@@ -363,24 +383,49 @@ public class ChatActivity extends AppCompatActivity {
 
     public void onSendPress(View view) {
 
-        final LocalChatDatabase chatDatabase = new LocalChatDatabase(this, object_id);
+        if (send.getDrawable().getConstantState().equals(getResources().getDrawable(R.drawable.send).getConstantState())) {
+            final LocalChatDatabase chatDatabase = new LocalChatDatabase(this, object_id);
 
-        if (!msg.getText().toString().trim().isEmpty()) {
-            final SharedPreferences sp = getSharedPreferences("login", MODE_PRIVATE);
-            final String student_id = sp.getString("id", "");
-            final String message = msg.getText().toString().trim();
-            final Date currentDateTime = new Date();
+            if (!msg.getText().toString().trim().isEmpty()) {
+                final SharedPreferences sp = getSharedPreferences("login", MODE_PRIVATE);
+                final String student_id = sp.getString("id", "");
+                final String message = msg.getText().toString().trim();
+                final Date currentDateTime = new Date();
 
-            //Inserting To Local Database
-            MessageObject messageObject = new MessageObject(object_id, student_id, message, currentDateTime.toString(), getHeading(), "wait");
-            messageObjectList.add(messageObject);
-            chatDatabase.addUserDetails(messageObject);
-            adapter.notifyItemInserted(messageObjectList.size() - 1);
-            chatListRecyclerView.smoothScrollToPosition(messageObjectList.size() - 1);
+                //Inserting To Local Database
+                MessageObject messageObject = new MessageObject(object_id, student_id, message, currentDateTime.toString(), getHeading(), "wait");
+                messageObjectList.add(messageObject);
+                chatDatabase.addUserDetails(messageObject);
+                adapter.notifyItemInserted(messageObjectList.size() - 1);
+                chatListRecyclerView.smoothScrollToPosition(messageObjectList.size() - 1);
 
-            sorryText.setVisibility(View.INVISIBLE);
-            sorryImage.setVisibility(View.INVISIBLE);
-            msg.setText("");
+                sorryText.setVisibility(View.INVISIBLE);
+                sorryImage.setVisibility(View.INVISIBLE);
+                msg.setText("");
+            }
+        } else {
+
+            //Speech to Text Recognition
+
+            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(intent, speechCode);
+            } else {
+                Toast.makeText(this, "Device doesn't Support Speech Input", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == speechCode && resultCode == RESULT_OK && data != null) {
+            ArrayList<String> list = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            msg.setText(list.get(0));
+            msg.setSelection(list.get(0).length());
         }
     }
 
@@ -398,49 +443,6 @@ public class ChatActivity extends AppCompatActivity {
             sorryImage.setVisibility(View.INVISIBLE);
             chatListRecyclerView.smoothScrollToPosition(messageObjectList.size() - 1);
         }
-    }
-
-
-    public void onAttach(View view) {
-
-        Toast.makeText(this, "Please Select a Square Image.", Toast.LENGTH_LONG).show();
-        Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        getIntent.setType("image/*");
-
-        Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        pickIntent.setType("image/*");
-
-        Intent chooserIntent = Intent.createChooser(getIntent, "Select Image");
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
-
-        startActivityForResult(chooserIntent, img_requestCode);
-
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == img_requestCode && resultCode == RESULT_OK && data != null) {
-            path = data.getData();
-            if (path != null)
-                Toast.makeText(this, path.toString(), Toast.LENGTH_SHORT).show();
-            try {
-                img = MediaStore.Images.Media.getBitmap(getContentResolver(), path);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private String imgToString() {
-        if (img != null) {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            img.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-            byte[] arr = byteArrayOutputStream.toByteArray();
-            return Base64.encodeToString(arr, Base64.DEFAULT);
-        }
-        return "";
     }
 
     public String getHeading() {

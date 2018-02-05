@@ -126,18 +126,10 @@
             android:orientation="horizontal"
             android:paddingBottom="2dp">
 
-            <ImageView
-                android:id="@+id/attach"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center_vertical|start"
-                android:layout_marginStart="2dp"
-                android:onClick="onAttach"
-                app:srcCompat="@drawable/attach" />
-
             <android.support.design.widget.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
                 android:layout_weight="0.72">
 
                 <EditText
@@ -159,7 +151,7 @@
                 android:layout_marginLeft="6dp"
                 android:layout_marginRight="6dp"
                 android:onClick="onSendPress"
-                app:srcCompat="@drawable/send" />
+                app:srcCompat="@drawable/mic" />
         </LinearLayout>
 
     </RelativeLayout>

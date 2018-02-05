@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.ashishlakhmani.dit_sphere.R;
 import com.ashishlakhmani.dit_sphere.activities.HomeActivity;
@@ -35,8 +34,6 @@ public class News extends Fragment {
     private ProgressBar progressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ConstraintLayout headingLayout;
-
-    private Toolbar toolbar;
 
 
     public News() {

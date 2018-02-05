@@ -11,7 +11,6 @@ import android.net.NetworkInfo;
 
 import com.parse.Parse;
 import com.parse.ParseACL;
-import com.parse.ParseInstallation;
 
 import java.util.HashSet;
 import java.util.List;
@@ -29,15 +28,11 @@ public class ParseConnect extends Application {
 
         // Add your initialization code here
         Parse.initialize(new Parse.Configuration.Builder(getApplicationContext())
-                .applicationId("t6lE08nCzEERjCE5SrLAnP73LahAWaYapbDjslZ0")
-                .clientKey("CDhAcnlkdmGj7HmvZZdTZNPz3ltma4VGPKTgxFvx")
+                .applicationId("OCbIsKw6KBpwaiL6HsG7AwY2ZJC8AHh4TwhO9x1V")
+                .clientKey("OrMlI12f6HDJMx7mzckHCugt9rqpzJ7E0GV4FY5u")
                 .server("https://parseapi.back4app.com/")
                 .build()
         );
-
-        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-        installation.put("GCMSenderId", "746201752368");
-        installation.saveInBackground();
 
         //ParseUser.enableAutomaticUser();
         ParseACL defaultACL = new ParseACL();
@@ -48,7 +43,14 @@ public class ParseConnect extends Application {
         off_to_on = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                offToOnTask();
+                SharedPreferences sharedPreferences = getSharedPreferences("interact_activity", MODE_PRIVATE);
+
+                if(sharedPreferences.getBoolean("isOpen", true)){
+                    Intent i = new Intent("UPDATE_UI");
+                    sendBroadcast(i);
+                }else {
+                    offToOnTask();
+                }
             }
         };
 
@@ -60,6 +62,7 @@ public class ParseConnect extends Application {
         if (isNetworkAvailable()) {
 
             SharedPreferences sharedPreferences = getSharedPreferences("wait_table", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
             HashSet<String> set = new HashSet<>(sharedPreferences.getStringSet("set", new HashSet<String>()));
 
             for (String object_id : set) {
@@ -71,6 +74,8 @@ public class ParseConnect extends Application {
                     background.execute(messageObject.getHeading());
                 }
             }
+            editor.putStringSet("set", new HashSet<String>());
+            editor.apply();
         }
 
     }

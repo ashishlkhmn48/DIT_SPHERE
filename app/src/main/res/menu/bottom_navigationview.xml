@@ -7,6 +7,7 @@
         android:icon="@drawable/news"
         android:title="News" />
 
+
     <item
         android:id="@+id/result"
         android:icon="@drawable/result"

@@ -3,9 +3,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
+    <item android:title="DIT Hub">
+        <menu>
+            <group android:checkableBehavior="single">
+
+                <item
+                    android:id="@+id/interact"
+                    android:icon="@drawable/interact_2"
+                    android:title="DIT-Community" />
+
+                <item
+                    android:id="@+id/upcoming"
+                    android:icon="@drawable/upcoming"
+                    android:title="Upcoming Events" />
+
+            </group>
+        </menu>
+    </item>
+
+
     <item android:title="Students Corner">
         <menu>
             <group android:checkableBehavior="single">
+
+                <item
+                    android:id="@+id/clubs"
+                    android:icon="@drawable/interact_3"
+                    android:title="Clubs" />
 
                 <item
                     android:id="@+id/calendar"
@@ -21,11 +45,6 @@
                     android:id="@+id/syllabus"
                     android:icon="@drawable/syllabus"
                     android:title="Syllabus" />
-
-                <item
-                    android:id="@+id/interact"
-                    android:icon="@drawable/interact"
-                    android:title="Interact with Students" />
 
             </group>
         </menu>
@@ -51,7 +70,7 @@
     </item>
 
 
-    <item android:title="Your Corner">
+    <item android:title="Others">
         <menu>
             <group android:checkableBehavior="single">
 

@@ -50,7 +50,7 @@ public class FollowedThreadAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_followed, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_followed_thread, parent, false);
         return new FollowedThreadAdapter.MyViewHolder(view);
     }
 

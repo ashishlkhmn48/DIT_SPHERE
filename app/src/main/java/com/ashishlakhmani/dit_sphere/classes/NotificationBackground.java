@@ -19,6 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashSet;
+import java.util.Set;
 
 
 public class NotificationBackground extends AsyncTask<String, Void, String> {
@@ -27,9 +28,6 @@ public class NotificationBackground extends AsyncTask<String, Void, String> {
     private ImageView imageView;
 
     private MessageObject messageObject;
-
-    //To check if all Message objects sent or not.
-    private static int count = 0;
 
     //Used for Network Monitor Offine-to-Online purpose.
     private boolean fromBackground = false;
@@ -49,7 +47,7 @@ public class NotificationBackground extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... params) {
 
-        String login_url = "https://lakhmanianita.000webhostapp.com/notification.php";
+        String login_url = "https://lakhmanianita.000webhostapp.com/dit_sphere/notification.php";
         try {
             String object_id = messageObject.getObject_id();
             String student_id = messageObject.getStudent_id();
@@ -112,14 +110,6 @@ public class NotificationBackground extends AsyncTask<String, Void, String> {
             messageObject.setSendStatus("success");
             String date = messageObject.getDate();
             chatDatabase.updateSendStatus(date, messageObject);
-
-            if (fromBackground) {
-                HashSet<String> set = new HashSet<>(sharedPreferences.getStringSet("set", new HashSet<String>()));
-                set.remove(messageObject.getObject_id());
-                editor.putStringSet("set", set);
-                editor.apply();
-            }
-
             Log.i("Status", "Message Sent to all from background.");
         } else {
             HashSet<String> set = new HashSet<>(sharedPreferences.getStringSet("set", new HashSet<String>()));
@@ -141,7 +131,7 @@ public class NotificationBackground extends AsyncTask<String, Void, String> {
             imageView.setImageResource(R.drawable.success);
             Log.i("Status", "Message Sent to all.");
         } else {
-            HashSet<String> set = new HashSet<>(sharedPreferences.getStringSet("set", new HashSet<String>()));
+            Set<String> set = sharedPreferences.getStringSet("set", new HashSet<String>());
             set.add(messageObject.getObject_id());
             editor.putStringSet("set", set);
             editor.apply();

@@ -148,18 +148,16 @@ public class FollowedThread extends Fragment {
                                 if (swipeRefreshLayout.isRefreshing()) {
                                     swipeRefreshLayout.setRefreshing(false);
                                 }
+
                                 recyclerView.setVisibility(View.INVISIBLE);
                                 no_followed.setVisibility(View.VISIBLE);
 
                                 floatingActionButton.setVisibility(View.VISIBLE);
-                                floatingActionButton.setImageResource(R.drawable.add);
-
                                 if (e == null) {
                                     if (object != null) {
                                         isThreadCreated = true;
                                         objectID = object.getObjectId();
                                         heading = object.getString("heading").toUpperCase();
-
                                         floatingActionButton.setImageResource(R.drawable.interact_2);
                                         floating_action_delete_button.setVisibility(View.VISIBLE);
                                     }
@@ -185,13 +183,14 @@ public class FollowedThread extends Fragment {
 
                                 FollowedThreadAdapter adapter = new FollowedThreadAdapter(getContext(), objects, no_followed);
                                 recyclerView.setAdapter(adapter);
+
                                 no_followed.setVisibility(View.INVISIBLE);
                                 floatingActionButton.setVisibility(View.VISIBLE);
                                 if (e == null) {
                                     if (object != null) {
+                                        isThreadCreated = true;
                                         objectID = object.getObjectId();
                                         heading = object.getString("heading").toUpperCase();
-                                        isThreadCreated = true;
                                         floatingActionButton.setImageResource(R.drawable.interact_2);
                                         floating_action_delete_button.setVisibility(View.VISIBLE);
                                     }
@@ -382,6 +381,7 @@ public class FollowedThread extends Fragment {
                                     });
 
                                 } else {
+                                    progressDialog.dismiss();
                                     Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }

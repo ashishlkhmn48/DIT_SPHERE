@@ -50,7 +50,7 @@ public class OthersThreadAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_others, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_others_thread, parent, false);
         return new OthersThreadAdapter.MyViewHolder(view);
     }
 
@@ -80,7 +80,7 @@ public class OthersThreadAdapter extends RecyclerView.Adapter {
                 builder.setIcon(R.drawable.notification);
                 builder.setCancelable(false);
                 builder.setTitle("Join Conversation.");
-                builder.setMessage("You will get the Notifications.\nDo you still want to Continue ?");
+                builder.setMessage("You will get the Notifications.\n\nDo you still want to Continue ?");
 
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override

@@ -11,7 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
 import com.ashishlakhmani.dit_sphere.R;
-import com.ashishlakhmani.dit_sphere.pagers.TabPager;
+import com.ashishlakhmani.dit_sphere.pagers.InteractPager;
 
 public class InteractActivity extends AppCompatActivity {
 
@@ -48,9 +48,9 @@ public class InteractActivity extends AppCompatActivity {
         //link tab layout with viewpager
         tabLayout.setupWithViewPager(viewPager);
 
-        final TabPager adapter = new TabPager
+        final InteractPager pager = new InteractPager
                 (getSupportFragmentManager(), tabLayout.getTabCount());
-        viewPager.setAdapter(adapter);
+        viewPager.setAdapter(pager);
         //ViewPager sets case 0 tab automatically..
 
         tab1.setIcon(R.drawable.interact_3);

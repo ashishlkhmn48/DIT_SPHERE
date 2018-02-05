@@ -2,6 +2,7 @@ package com.ashishlakhmani.dit_sphere.fragments.news;
 
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
@@ -17,9 +18,7 @@ import android.widget.ProgressBar;
 import com.ashishlakhmani.dit_sphere.R;
 import com.parse.ParseObject;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class NewsWebView extends Fragment {
 
     private WebView webView;
@@ -52,6 +51,13 @@ public class NewsWebView extends Fragment {
                 progressBar.setVisibility(View.INVISIBLE);
                 super.onPageFinished(view, url);
             }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                return true;
+            }
+            
         });
 
         webView.setOnLongClickListener(new View.OnLongClickListener() {

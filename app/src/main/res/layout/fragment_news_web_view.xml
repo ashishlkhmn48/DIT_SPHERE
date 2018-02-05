@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:clickable="true"
-    tools:context="com.ashishlakhmani.youthopia.fragment.WebViewFragment">
+    android:focusable="true">
 
     <WebView
         android:id="@+id/web_view"
@@ -24,7 +24,6 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:theme="@style/AppTheme.WhiteAccent"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

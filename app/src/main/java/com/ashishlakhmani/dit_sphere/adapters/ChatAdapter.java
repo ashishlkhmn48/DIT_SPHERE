@@ -194,7 +194,7 @@ public class ChatAdapter extends RecyclerView.Adapter {
             bubble_layout_parent = itemView.findViewById(R.id.bubble_layout_parent);
             message = itemView.findViewById(R.id.message_text);
             id = itemView.findViewById(R.id.id_text);
-            date = itemView.findViewById(R.id.date);
+            date = itemView.findViewById(R.id.id);
             time = itemView.findViewById(R.id.time);
             statusImage = itemView.findViewById(R.id.status_image);
         }

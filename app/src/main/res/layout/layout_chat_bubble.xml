@@ -58,7 +58,7 @@
             android:textColor="@color/custom_sixth"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/date"
+            app:layout_constraintEnd_toStartOf="@+id/id"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/id_text" />
 
@@ -76,7 +76,7 @@
             app:srcCompat="@drawable/wait" />
 
         <TextView
-            android:id="@+id/date"
+            android:id="@+id/id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="1dp"

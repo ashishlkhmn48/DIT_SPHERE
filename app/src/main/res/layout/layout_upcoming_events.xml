@@ -1,18 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/news_swipe_refresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:clickable="true"
-    android:focusable="true"
-    tools:context="com.ashishlakhmani.dit_sphere.fragments.News">
+    android:id="@+id/events_swipe_refresh"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/heading_layout"
@@ -33,12 +28,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Pull to Refresh News Feeds"
+                android:text="Pull to Refresh Events Feeds"
                 android:textColor="@color/colorAccent"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.3"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -47,11 +41,10 @@
 
             <ImageView
                 android:id="@+id/imageView6"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:layout_marginStart="5dp"
-                android:contentDescription="TODO"
-                android:src="@drawable/news_feeds"
+                android:src="@drawable/upcoming"
                 app:layout_constraintBottom_toBottomOf="@+id/textView9"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -70,7 +63,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/news_recyclerview"
+            android:id="@+id/events_recyclerview"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="2dp"
@@ -81,6 +74,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/heading_layout"
             app:layout_constraintVertical_bias="0.0" />
+
+
     </android.support.constraint.ConstraintLayout>
+
+
 
 </android.support.v4.widget.SwipeRefreshLayout>
