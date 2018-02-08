@@ -149,13 +149,13 @@ public class ClubNotificationActivity extends AppCompatActivity {
                 if (isChecked) {
                     editor.remove(objectId);
                     editor.apply();
+                    isChecked = false;
                     floating_notify.setImageResource(R.drawable.notify_off);
                     Toast.makeText(ClubNotificationActivity.this, "Alarm Cancelled", Toast.LENGTH_SHORT).show();
-                    isChecked = false;
                 } else {
+                    isChecked = true;
                     floating_notify.setImageResource(R.drawable.notify_on);
                     dateTimeTask();
-                    isChecked = true;
                 }
             }
         });
@@ -191,6 +191,7 @@ public class ClubNotificationActivity extends AppCompatActivity {
                 mTimePicker.setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
                     public void onCancel(DialogInterface dialog) {
+                        isChecked = false;
                         floating_notify.setImageResource(R.drawable.notify_off);
                     }
                 });
@@ -202,6 +203,7 @@ public class ClubNotificationActivity extends AppCompatActivity {
         dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
+                isChecked = false;
                 floating_notify.setImageResource(R.drawable.notify_off);
             }
         });
