@@ -16,7 +16,7 @@ system.</p>
   <li>Not getting aware of every news, announcement or upcoming event at time.</li>
   <li>Less interaction between Junior and senior.</li>
   <li>Issue in calculation pointers.</li>
-  <li>Clubs have to do publicity in classes.</li>
+  <li>Clubs have to do publicity in classes which is time wasting for Members as well as Disturbances for classes.</li>
 </ul>
 </p>
 
@@ -26,7 +26,7 @@ system.</p>
   <li>News and Upcoming Events Notifications</li>
   <li>Discussion forum</li>
   <li>Profanity Filter for Discussion Forum</li>
-  <li>Clubs </li>
+  <li>Club Events Notifier</li>
   <li>Result section</li>
   <li>Pointer calculation system.</li>
 </ul>
