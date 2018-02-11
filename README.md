@@ -1,4 +1,5 @@
-# DIT SPHERE
+# DIT SPHERE 
+<img src = "app/src/main/res/drawable/sphere.png"  width = "200">
 
 <h1>WHY DIT-SPHERE?</h1>
 <p>DIT has been functioning with a website based system since its inception
@@ -51,7 +52,7 @@ system.</p>
 
 
 <h1>Glimpses of DIT SPHERE</h1>
+<img src = "images/0.png" width = "100">
 
 <h1>Backend Files of DIT SPHERE for Reference</h1>
-
-<h1>Apk of DIT SPHERE/h1>
+<p>https://github.com/ashishlkhmn48/DIT_Sphere_Files</p>
