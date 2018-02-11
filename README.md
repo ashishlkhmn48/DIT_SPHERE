@@ -48,7 +48,9 @@ system.</p>
   <li>https://docs.back4app.com</li>
   <li>https://github.com/parse-community/Parse-SDK-Android</li>
   <li>https://github.com/parse-community/parse-php-sdk</li>
+  <li>https://firebase.google.com/docs/android/setup</li>
   <li>https://developer.android.com/reference/org/w3c/dom/Document.html</li>
+  <li>https://www.w3schools.com</li>
   <li>https://stackoverflow.com</li>
 </ul>
 
