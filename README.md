@@ -42,19 +42,6 @@ system.</p>
 <li>MYSQL</li>
 </ul>
 
-
-<h1>References</h1>
-  <ul>
-  <li>https://docs.back4app.com</li>
-  <li>https://github.com/parse-community/Parse-SDK-Android</li>
-  <li>https://github.com/parse-community/parse-php-sdk</li>
-  <li>https://firebase.google.com/docs/android/setup</li>
-  <li>https://developer.android.com/reference/org/w3c/dom/Document.html</li>
-  <li>https://www.w3schools.com</li>
-  <li>https://stackoverflow.com</li>
-</ul>
-
-
 <h1>Glimpses of DIT SPHERE</h1>
 <table>
   <tr>
@@ -82,3 +69,14 @@ system.</p>
 
 <h1>Backend Files of DIT SPHERE for Reference</h1>
 https://github.com/ashishlkhmn48/DIT_Sphere_Files
+
+<h1>References</h1>
+  <ul>
+  <li>https://docs.back4app.com</li>
+  <li>https://github.com/parse-community/Parse-SDK-Android</li>
+  <li>https://github.com/parse-community/parse-php-sdk</li>
+  <li>https://firebase.google.com/docs/android/setup</li>
+  <li>https://developer.android.com/reference/org/w3c/dom/Document.html</li>
+  <li>https://www.w3schools.com</li>
+  <li>https://stackoverflow.com</li>
+</ul>
