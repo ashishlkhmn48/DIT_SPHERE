@@ -37,6 +37,7 @@ system.</p>
 <li>ANDROID Libraries</li>
 <li>JAVA</li>
 <li>Parse Server hosted on Back4app Platform</li>
+<li>Firebase</li>
 <li>PHP</li>
 <li>MYSQL</li>
 </ul>
