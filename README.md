@@ -25,6 +25,7 @@ system.</p>
 <ul>
   <li>News and Upcoming Events Notifications</li>
   <li>Discussion forum</li>
+  <li>Profanity Filter for Discussion Forum</li>
   <li>Clubs </li>
   <li>Result section</li>
   <li>Pointer calculation system.</li>
