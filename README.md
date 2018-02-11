@@ -52,7 +52,27 @@ system.</p>
 
 
 <h1>Glimpses of DIT SPHERE</h1>
-<img src = "images/0.png" width = "100">
+<table>
+  <tr>
+    <th> <img src = "images/1.png" width = "200"> </th>
+    <th> <img src = "images/2.png" width = "200"> </th>
+    <th> <img src = "images/3.png" width = "200"> </th>
+  </tr>
+  <tr>
+    <th> <img src = "images/4.png" width = "200"> </th>
+    <th> <img src = "images/5.png" width = "200"> </th>
+    <th> <img src = "images/6.png" width = "200"> </th>
+  </tr>
+    <tr>
+    <th> <img src = "images/7.png" width = "200"> </th>
+    <th> <img src = "images/8.png" width = "200"> </th>
+    <th> <img src = "images/9.png" width = "200"> </th>
+  </tr>
+  </table>
+  <b>And Many More..</b>
+
+<h1>Apk of DIT SPHERE</h1>
+<a href = "https://raw.githubusercontent.com/ashishlkhmn48/DIT_SPHERE/master/images/sphere.apk">Click to Download</a>
 
 <h1>Backend Files of DIT SPHERE for Reference</h1>
-<p>https://github.com/ashishlkhmn48/DIT_Sphere_Files</p>
+https://github.com/ashishlkhmn48/DIT_Sphere_Files
