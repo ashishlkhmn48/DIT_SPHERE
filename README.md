@@ -28,7 +28,10 @@ system.</p>
   <li>Profanity Filter for Discussion Forum</li>
   <li>Club Events Notifier</li>
   <li>Result section</li>
-  <li>Pointer calculation system.</li>
+  <li>Placement Cell</li>
+  <li>Faculty Interaction and Support</li>
+  <li>Pointer calculation System</li>
+  <li>And Much More..</li>
 </ul>
 </p>
 
