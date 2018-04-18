@@ -37,7 +37,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
 
-public class ClubNotificationActivity extends AppCompatActivity {
+public class PlacementViewActivity extends AppCompatActivity {
 
     ProgressBar progressBar;
     CoordinatorLayout layout;
@@ -50,8 +50,7 @@ public class ClubNotificationActivity extends AppCompatActivity {
     private Calendar myCalendar = Calendar.getInstance();
 
     private String objectId;
-    private String clubName;
-    private String headingText;
+    private String company_name;
     private String imageUrl;
 
     private boolean isChecked = false;
@@ -59,7 +58,7 @@ public class ClubNotificationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_club_notification);
+        setContentView(R.layout.activity_placement_view);
 
         initialize();
 
@@ -74,7 +73,6 @@ public class ClubNotificationActivity extends AppCompatActivity {
 
         loadDetails();
         floatingActionButtonTask();
-
     }
 
     @Override
@@ -85,7 +83,6 @@ public class ClubNotificationActivity extends AppCompatActivity {
 
     private void initialize() {
         objectId = getIntent().getStringExtra("objectId");
-        clubName = getIntent().getStringExtra("club_name");
         progressBar = findViewById(R.id.progressBar);
         layout = findViewById(R.id.layout);
         no_events = findViewById(R.id.no_events);
@@ -105,25 +102,25 @@ public class ClubNotificationActivity extends AppCompatActivity {
     }
 
     private void loadDetails() {
-        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("ClubNotification");
-        query.whereEqualTo("club_id", objectId);
+        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Placement");
+        query.whereEqualTo("objectId", objectId);
 
         query.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject object, ParseException e) {
                 progressBar.setVisibility(View.INVISIBLE);
                 if (e == null) {
-                    headingText = object.getString("heading");
+                    company_name = object.getString("company_name");
 
-                    message.setText(object.getString("message"));
+                    message.setText(object.getString("details"));
                     date.setText(getDateString(object.getDate("date")));
-                    toolbarTask(headingText);
+                    toolbarTask(company_name);
                     layout.setVisibility(View.VISIBLE);
 
-                    ParseFile file = object.getParseFile("image");
+                    ParseFile file = object.getParseFile("picture");
                     if (file != null) {
                         imageUrl = file.getUrl();
-                        Picasso.with(ClubNotificationActivity.this)
+                        Picasso.with(PlacementViewActivity.this)
                                 .load(file.getUrl())
                                 .placeholder(R.drawable.placeholder_album)
                                 .into(imageView);
@@ -134,7 +131,7 @@ public class ClubNotificationActivity extends AppCompatActivity {
                 } else {
                     no_events.setVisibility(View.VISIBLE);
                     layout.setVisibility(View.INVISIBLE);
-                    Toast.makeText(ClubNotificationActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PlacementViewActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -151,7 +148,7 @@ public class ClubNotificationActivity extends AppCompatActivity {
                     editor.apply();
                     isChecked = false;
                     floating_notify.setImageResource(R.drawable.notify_off);
-                    Toast.makeText(ClubNotificationActivity.this, "Alarm Cancelled", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PlacementViewActivity.this, "Alarm Cancelled", Toast.LENGTH_SHORT).show();
                 } else {
                     isChecked = true;
                     floating_notify.setImageResource(R.drawable.notify_on);
@@ -175,13 +172,13 @@ public class ClubNotificationActivity extends AppCompatActivity {
                 Calendar calendar = Calendar.getInstance();
                 int hour = calendar.get(Calendar.HOUR_OF_DAY);
                 int minute = calendar.get(Calendar.MINUTE);
-                TimePickerDialog mTimePicker = new TimePickerDialog(ClubNotificationActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                TimePickerDialog mTimePicker = new TimePickerDialog(PlacementViewActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                         myCalendar.set(year, month, dayOfMonth, selectedHour, selectedMinute);
                         String myFormat = "dd MMMM yyyy : HH:mm";
-                        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.UK);
-                        Toast.makeText(ClubNotificationActivity.this, "You will be Notified on : " + sdf.format(myCalendar.getTime()), Toast.LENGTH_LONG).show();
+                        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
+                        Toast.makeText(PlacementViewActivity.this, "You will be Notified on : " + sdf.format(myCalendar.getTime()), Toast.LENGTH_LONG).show();
                         createAlarm();
                     }
                 }, hour, minute, true);//Yes 24 hour time
@@ -218,10 +215,10 @@ public class ClubNotificationActivity extends AppCompatActivity {
 
         long alarm = myCalendar.getTimeInMillis();
         Intent intent = new Intent(this, NotificationReceiverClub.class);
-        intent.putExtra("heading", headingText.trim());
-        intent.putExtra("club_name", clubName);
+        intent.putExtra("company_name", company_name.trim());
         intent.putExtra("image_url", imageUrl);
         intent.putExtra("objectId", objectId);
+        intent.putExtra("date", date.getText().toString());
         PendingIntent pendingIntent1 = PendingIntent.getBroadcast(this, num, intent, 0);
         AlarmManager alarmManager1 = (AlarmManager) getSystemService(ALARM_SERVICE);
         if (alarmManager1 != null) {
@@ -233,5 +230,6 @@ public class ClubNotificationActivity extends AppCompatActivity {
         editor.putBoolean(objectId, true);
         editor.apply();
     }
+
 
 }

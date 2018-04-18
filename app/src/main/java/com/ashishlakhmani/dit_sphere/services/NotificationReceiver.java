@@ -1,11 +1,15 @@
 package com.ashishlakhmani.dit_sphere.services;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 import com.ashishlakhmani.dit_sphere.R;
@@ -31,7 +35,16 @@ public class NotificationReceiver extends BroadcastReceiver {
         Random random = new Random();
         int num = random.nextInt(999999999);
 
-        final NotificationCompat.Builder notification = new NotificationCompat.Builder(context);
+        NotificationChannel channel = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            channel = new NotificationChannel(context.getString(R.string.channel_id), context.getString(R.string.channel_id), NotificationManager.IMPORTANCE_HIGH);
+            channel.enableLights(true);
+            channel.enableVibration(true);
+            channel.setLightColor(Color.BLUE);
+            channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        }
+
+        final NotificationCompat.Builder notification = new NotificationCompat.Builder(context,context.getString(R.string.channel_id));
         notification.setAutoCancel(true);
         notification.setSmallIcon(R.drawable.notification);
         notification.setWhen(System.currentTimeMillis());
@@ -48,6 +61,9 @@ public class NotificationReceiver extends BroadcastReceiver {
         notification.setContentIntent(pi);
         NotificationManager nm = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         if (nm != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                nm.createNotificationChannel(channel);
+            }
             nm.notify(num, notification.build());
         }
 

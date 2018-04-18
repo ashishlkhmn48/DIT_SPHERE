@@ -32,6 +32,16 @@
                     android:title="Clubs" />
 
                 <item
+                    android:id="@+id/placement_cell"
+                    android:icon="@drawable/placement_cell"
+                    android:title="Placement Cell" />
+
+                <item
+                    android:id="@+id/faculties"
+                    android:icon="@drawable/faculty"
+                    android:title="Faculties" />
+
+                <item
                     android:id="@+id/calendar"
                     android:icon="@drawable/calendar"
                     android:title="Academic Calendar" />

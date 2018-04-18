@@ -18,7 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ashishlakhmani.dit_sphere.R;
-import com.ashishlakhmani.dit_sphere.activities.ClubNotificationActivity;
+import com.ashishlakhmani.dit_sphere.activities.ClubActivity;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
@@ -60,7 +60,7 @@ public class FollowedClubAdapter extends RecyclerView.Adapter {
         ((MyViewHolder) holder).card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, ClubNotificationActivity.class);
+                Intent intent = new Intent(context, ClubActivity.class);
                 intent.putExtra("objectId", parseObject.getObjectId());
                 intent.putExtra("club_name", parseObject.getString("name"));
                 context.startActivity(intent);

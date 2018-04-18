@@ -8,7 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -26,7 +26,6 @@ import android.widget.ToggleButton;
 
 import com.ashishlakhmani.dit_sphere.R;
 import com.ashishlakhmani.dit_sphere.activities.HomeActivity;
-import com.ashishlakhmani.dit_sphere.fragments.news.NewsWebView;
 import com.ashishlakhmani.dit_sphere.services.NotificationReceiver;
 import com.parse.ParseObject;
 
@@ -68,11 +67,7 @@ public class NewsAdapter extends RecyclerView.Adapter {
         ((MyViewHolder) holder).card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NewsWebView newsWebView = new NewsWebView();
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("parse_object", objectList.get(position));
-                newsWebView.setArguments(bundle);
-                loadFragment(newsWebView, "news_image");
+                context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(objectList.get(position).getString("url"))));
             }
         });
 
@@ -115,7 +110,7 @@ public class NewsAdapter extends RecyclerView.Adapter {
             notification = itemView.findViewById(R.id.toggle_notification);
             sno = itemView.findViewById(R.id.sno);
             heading = itemView.findViewById(R.id.name);
-            date = itemView.findViewById(R.id.credit);
+            date = itemView.findViewById(R.id.date);
         }
     }
 
@@ -186,9 +181,7 @@ public class NewsAdapter extends RecyclerView.Adapter {
         intent.putExtra("title", "DIT-News");
         PendingIntent pendingIntent1 = PendingIntent.getBroadcast(context, num, intent, 0);
         AlarmManager alarmManager1 = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        if (alarmManager1 != null) {
-            alarmManager1.set(AlarmManager.RTC_WAKEUP, alarm, pendingIntent1);
-        }
+        alarmManager1.set(AlarmManager.RTC_WAKEUP, alarm, pendingIntent1);
 
         SharedPreferences sp = context.getSharedPreferences("notification", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();

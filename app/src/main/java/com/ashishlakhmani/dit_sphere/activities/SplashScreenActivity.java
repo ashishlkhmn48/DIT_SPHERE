@@ -25,9 +25,17 @@ public class SplashScreenActivity extends AppCompatActivity {
             public void run() {
                 SharedPreferences sp = getSharedPreferences("login", MODE_PRIVATE);
                 if (sp.contains("id") && sp.contains("password")) {
-                    Intent intent = new Intent(SplashScreenActivity.this, HomeActivity.class);
-                    startActivity(intent);
-                    finish();
+                    try {
+                        Long.parseLong(sp.getString("id",""));
+                        Intent intent = new Intent(SplashScreenActivity.this, HomeActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }catch (NumberFormatException e){
+                        Intent intent = new Intent(SplashScreenActivity.this, FacultyActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+
                 } else {
                     progressBar.setVisibility(View.INVISIBLE);
                     Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
@@ -35,6 +43,6 @@ public class SplashScreenActivity extends AppCompatActivity {
                     finish();
                 }
             }
-        }, 500);
+        }, 700);
     }
 }

@@ -12,6 +12,13 @@
 
         <menu>
 
+            <item
+                android:id="@+id/notification"
+                android:icon="@drawable/notification_2"
+                android:orderInCategory="99"
+                android:title="Faculty Notifications"
+                app:showAsAction="ifRoom" />
+
 
             <item
                 android:id="@+id/help"

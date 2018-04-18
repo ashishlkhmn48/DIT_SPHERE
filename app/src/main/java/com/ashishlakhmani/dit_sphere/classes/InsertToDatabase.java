@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.ashishlakhmani.dit_sphere.activities.FacultyActivity;
 import com.ashishlakhmani.dit_sphere.activities.HomeActivity;
 
 import java.io.BufferedReader;
@@ -29,13 +30,15 @@ public class InsertToDatabase extends AsyncTask<String, Void, String> {
     private String id;
     private String password;
     private String branch;
+    private String email;
 
-    public InsertToDatabase(Context context, ProgressDialog dialog, String id, String password, String branch) {
+    public InsertToDatabase(Context context, ProgressDialog dialog, String id, String password, String branch,String email) {
         this.context = context;
         this.dialog = dialog;
         this.id = id;
         this.password = password;
         this.branch = branch;
+        this.email = email;
     }
 
     public InsertToDatabase(Context context, String id, String password, String branch) {
@@ -62,8 +65,9 @@ public class InsertToDatabase extends AsyncTask<String, Void, String> {
             OutputStream outputStream = httpURLConnection.getOutputStream();
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
             String post_data = URLEncoder.encode("fcm_token", "UTF-8") + "=" + URLEncoder.encode(fcm_token, "UTF-8") + "&" +
-                    URLEncoder.encode("student_id", "UTF-8") + "=" + URLEncoder.encode(id, "UTF-8") + "&" +
-                    URLEncoder.encode("date", "UTF-8") + "=" + URLEncoder.encode(date, "UTF-8");
+                    URLEncoder.encode("id", "UTF-8") + "=" + URLEncoder.encode(id, "UTF-8") + "&" +
+                    URLEncoder.encode("date", "UTF-8") + "=" + URLEncoder.encode(date, "UTF-8") + "&" +
+                    URLEncoder.encode("branch", "UTF-8") + "=" + URLEncoder.encode(branch, "UTF-8");
             bufferedWriter.write(post_data);
             bufferedWriter.flush();
             bufferedWriter.close();
@@ -90,7 +94,6 @@ public class InsertToDatabase extends AsyncTask<String, Void, String> {
         SharedPreferences sp = context.getSharedPreferences("login", Context.MODE_PRIVATE);
         if (!sp.contains("id")) {
             if (result.equals("updated") || result.equals("inserted")) {
-
                 SharedPreferences sharedPreferences = context.getSharedPreferences("interact_activity", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putBoolean("isOpen", false);
@@ -98,12 +101,18 @@ public class InsertToDatabase extends AsyncTask<String, Void, String> {
 
                 saveDetails();
                 dialog.dismiss();
-                Intent intent = new Intent(context, HomeActivity.class);
-                context.startActivity(intent);
+                try {
+                    Long.parseLong(sp.getString("id",""));
+                    Intent intent = new Intent(context, HomeActivity.class);
+                    context.startActivity(intent);
+                }catch (NumberFormatException e){
+                    Intent intent = new Intent(context, FacultyActivity.class);
+                    context.startActivity(intent);
+                }
                 ((Activity) context).finish();
             } else {
                 dialog.dismiss();
-                Toast.makeText(context, "Some Error occured.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -115,6 +124,7 @@ public class InsertToDatabase extends AsyncTask<String, Void, String> {
         editor.putString("id", id);
         editor.putString("password", password);
         editor.putString("branch", branch);
+        editor.putString("email", email);
         editor.apply();
     }
 

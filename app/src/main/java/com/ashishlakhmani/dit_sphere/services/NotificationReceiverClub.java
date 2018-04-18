@@ -1,6 +1,8 @@
 package com.ashishlakhmani.dit_sphere.services;
 
 
+import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -9,11 +11,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.ashishlakhmani.dit_sphere.R;
-import com.ashishlakhmani.dit_sphere.activities.ClubNotificationActivity;
+import com.ashishlakhmani.dit_sphere.activities.ClubActivity;
 
 import java.io.IOException;
 import java.net.URL;
@@ -48,8 +52,16 @@ public class NotificationReceiverClub extends BroadcastReceiver {
             largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.dit);
         }
 
+        NotificationChannel channel = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            channel = new NotificationChannel(context.getString(R.string.channel_id), context.getString(R.string.channel_id), NotificationManager.IMPORTANCE_HIGH);
+            channel.enableLights(true);
+            channel.enableVibration(true);
+            channel.setLightColor(Color.BLUE);
+            channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        }
 
-        final NotificationCompat.Builder notification = new NotificationCompat.Builder(context);
+        final NotificationCompat.Builder notification = new NotificationCompat.Builder(context,context.getString(R.string.channel_id));
         notification.setAutoCancel(true);
         notification.setSmallIcon(R.drawable.notification);
         notification.setWhen(System.currentTimeMillis());
@@ -59,7 +71,7 @@ public class NotificationReceiverClub extends BroadcastReceiver {
         notification.setStyle(new NotificationCompat.BigPictureStyle(notification).bigPicture(largeIcon));
         notification.setDefaults(NotificationCompat.DEFAULT_ALL);
 
-        Intent intent = new Intent(context, ClubNotificationActivity.class);
+        Intent intent = new Intent(context, ClubActivity.class);
         intent.putExtra("objectId", objectId);
         intent.putExtra("club_name", clubName);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -67,6 +79,9 @@ public class NotificationReceiverClub extends BroadcastReceiver {
         notification.setContentIntent(pi);
         NotificationManager nm = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         if (nm != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                nm.createNotificationChannel(channel);
+            }
             nm.notify(num, notification.build());
         }
 

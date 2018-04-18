@@ -44,6 +44,7 @@ import com.ashishlakhmani.dit_sphere.fragments.Calculator;
 import com.ashishlakhmani.dit_sphere.fragments.Club;
 import com.ashishlakhmani.dit_sphere.fragments.CommonImageFragment;
 import com.ashishlakhmani.dit_sphere.fragments.Downloads;
+import com.ashishlakhmani.dit_sphere.fragments.FacultyList;
 import com.ashishlakhmani.dit_sphere.fragments.Help;
 import com.ashishlakhmani.dit_sphere.fragments.News;
 import com.ashishlakhmani.dit_sphere.fragments.Profile;
@@ -163,7 +164,7 @@ public class HomeActivity extends AppCompatActivity
 
         String id = sp.getString("id", "");
         String password = sp.getString("password", "");
-        String branch = sp.getString("branch", "");
+        String branch = sp.getString("branch", "").toLowerCase();
 
         InsertToDatabase insertToDatabase = new InsertToDatabase(this, id, password, branch);
         insertToDatabase.execute(id, fcm_token, new Date().toString());
@@ -370,6 +371,12 @@ public class HomeActivity extends AppCompatActivity
                     Help help = new Help();
                     loadFragmentForDrawer(help, "help");
                 }
+                break;
+
+
+            case R.id.notification:
+                Intent intent = new Intent(this,FacultyNotificationActivity.class);
+                startActivity(intent);
 
         }
 
@@ -453,6 +460,20 @@ public class HomeActivity extends AppCompatActivity
                     loadFragmentForDrawer(club,"club");
                 }
                 break;
+
+            case R.id.placement_cell:
+                if(!isFragmentVisible("placement_cell")){
+                    Intent intent1 = new Intent(this,PlacementCellActivity.class);
+                    startActivity(intent1);
+                }
+                break;
+
+            case R.id.faculties :
+                if(!isFragmentVisible("faculty_list")){
+                    FacultyList facultyList = new FacultyList();
+                    loadFragmentForDrawer(facultyList,"faculty_list");
+                }
+
         }
 
         drawer.closeDrawer(GravityCompat.START);

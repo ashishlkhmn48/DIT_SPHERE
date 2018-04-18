@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.ClubNotificationActivity">
+    tools:context=".activities.PlacementViewActivity">
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -16,12 +16,7 @@
         android:layout_gravity="center_vertical|center" />
 
     <include
-        layout="@layout/layout_no_events"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <include
-        layout="@layout/app_bar_clubnotification"
+        layout="@layout/app_bar_placement_notification"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

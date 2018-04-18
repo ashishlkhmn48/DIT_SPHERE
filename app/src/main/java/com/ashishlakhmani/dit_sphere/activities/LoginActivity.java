@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.ashishlakhmani.dit_sphere.R;
@@ -30,6 +31,7 @@ import java.util.Date;
 public class LoginActivity extends AppCompatActivity {
 
     private EditText id, password, email;
+    private RadioButton radioStudent;
     private CheckBox show;
     private ProgressDialog dialog;
 
@@ -58,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         email = (EditText) findViewById(R.id.resetEmail);
         show = (CheckBox) findViewById(R.id.show);
         dialog = new ProgressDialog(this);
+        radioStudent = findViewById(R.id.radio_student);
     }
 
     //Login button action.
@@ -77,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
     //Reset button action.
     public void onReset(View v) {
 
-        if (checkEmail()) {
+        if (checkEmail(this.email.getText().toString().trim())) {
 
             dialog.setCancelable(false);
             dialog.setTitle("DIT - SPHERE");
@@ -108,8 +111,8 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private boolean checkEmail() {
-        String email = this.email.getText().toString().trim();
+    //Validate email
+    private boolean checkEmail(String email) {
         int dotPos = email.lastIndexOf(".");
         int atPos = email.indexOf("@");
 
@@ -139,7 +142,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    //Student Login
+    //Student & Faculty Login
     private void login() {
         if (checkID() && checkPassword()) {
 
@@ -149,8 +152,21 @@ public class LoginActivity extends AppCompatActivity {
                 public void done(ParseUser user, ParseException e) {
                     if (e == null) {
 
-                        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Students");
-                        query.whereEqualTo("student_id", id.getText().toString().trim());
+                        String class_name;
+                        String id_name;
+                        final String email_name;
+
+                        if (radioStudent.isChecked()) {
+                            class_name = "Students";
+                            id_name = "student_id";
+                            email_name = "email";
+                        }else {
+                            class_name = "Faculty";
+                            id_name = "email_id";
+                            email_name = id_name;
+                        }
+                        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>(class_name);
+                        query.whereEqualTo(id_name, id.getText().toString().toLowerCase().trim());
                         query.getFirstInBackground(new GetCallback<ParseObject>() {
                             @Override
                             public void done(ParseObject object, ParseException e) {
@@ -159,12 +175,17 @@ public class LoginActivity extends AppCompatActivity {
                                     SharedPreferences sp = getApplicationContext().getSharedPreferences(getString(R.string.FCM_PREF), Context.MODE_PRIVATE);
                                     final String fcm_token = sp.getString(getString(R.string.FCM_TOKEN), "");
 
-                                    InsertToDatabase insertToDatabase = new InsertToDatabase(LoginActivity.this, dialog, id.getText().toString().trim(), password.getText().toString(), object.getString("branch"));
+                                    InsertToDatabase insertToDatabase = new InsertToDatabase(LoginActivity.this, dialog, id.getText().toString().trim(), password.getText().toString(), object.getString("branch").toLowerCase(),email_name);
                                     insertToDatabase.execute(id.getText().toString().trim(), fcm_token, new Date().toString());
 
                                 } else {
                                     dialog.dismiss();
-                                    Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    if (e.getCode() == ParseException.CONNECTION_FAILED)
+                                        Toast.makeText(LoginActivity.this, "Check Internet Connection", Toast.LENGTH_SHORT).show();
+                                    else if (e.getCode() == ParseException.OBJECT_NOT_FOUND)
+                                        Toast.makeText(LoginActivity.this, "No User Available", Toast.LENGTH_SHORT).show();
+                                    else
+                                        Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -172,12 +193,17 @@ public class LoginActivity extends AppCompatActivity {
                         dialog.dismiss();
                         if (e.getCode() == ParseException.CONNECTION_FAILED)
                             Toast.makeText(LoginActivity.this, "Check Internet Connection", Toast.LENGTH_SHORT).show();
+                        else if (e.getCode() == ParseException.OBJECT_NOT_FOUND)
+                            Toast.makeText(LoginActivity.this, "No User Available", Toast.LENGTH_SHORT).show();
                         else
                             Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
         } else {
+
+            dialog.dismiss();
+
             if (!checkID()) {
                 id.setError("Invalid ID");
                 id.requestFocus();
@@ -192,10 +218,15 @@ public class LoginActivity extends AppCompatActivity {
 
     //validate Student ID
     private boolean checkID() {
-        if (id.getText().toString().trim().length() == 10)
-            return true;
-        else
-            return false;
+        if(radioStudent.isChecked()){
+            if (id.getText().toString().trim().length() == 10)
+                return true;
+            else
+                return false;
+        }else {
+            return checkEmail(id.getText().toString().toLowerCase().trim());
+        }
+
     }
 
     //validate Password

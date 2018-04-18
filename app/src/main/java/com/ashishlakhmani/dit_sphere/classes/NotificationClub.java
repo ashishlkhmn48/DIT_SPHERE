@@ -1,5 +1,6 @@
 package com.ashishlakhmani.dit_sphere.classes;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
@@ -19,9 +20,11 @@ import java.net.URLEncoder;
 public class NotificationClub extends AsyncTask<String, Void, String> {
 
     private Context context;
+    private ProgressDialog progressDialog;
 
-    public NotificationClub(Context context) {
+    public NotificationClub(Context context, ProgressDialog progressDialog) {
         this.context = context;
+        this.progressDialog = progressDialog;
     }
 
     @Override
@@ -65,6 +68,7 @@ public class NotificationClub extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
+        progressDialog.dismiss();
         Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
     }
 }

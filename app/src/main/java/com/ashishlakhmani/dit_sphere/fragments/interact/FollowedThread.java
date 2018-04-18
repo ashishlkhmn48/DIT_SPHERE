@@ -124,12 +124,12 @@ public class FollowedThread extends Fragment {
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("login", Context.MODE_PRIVATE);
         final String id = sharedPreferences.getString("id", "");
         final String branch = sharedPreferences.getString("branch", "");
+
         ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Threads");
-        query.whereMatches("branch", branch);
+        query.whereMatches("branch", branch.toLowerCase());
         query.orderByAscending("createdAt");
         query.whereEqualTo("connected_id", id);
         query.whereNotEqualTo("from_id", id);
-
 
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -162,12 +162,15 @@ public class FollowedThread extends Fragment {
                                         floating_action_delete_button.setVisibility(View.VISIBLE);
                                     }
                                 } else {
+
                                     isThreadCreated = false;
                                     floatingActionButton.setImageResource(R.drawable.add);
                                     floating_action_delete_button.setVisibility(View.INVISIBLE);
+
                                 }
                             }
                         });
+
                     } else {
 
                         ParseQuery<ParseObject> innerQuery = new ParseQuery<ParseObject>("Threads");
@@ -179,13 +182,14 @@ public class FollowedThread extends Fragment {
                                 if (swipeRefreshLayout.isRefreshing()) {
                                     swipeRefreshLayout.setRefreshing(false);
                                 }
-                                recyclerView.setVisibility(View.VISIBLE);
-
-                                FollowedThreadAdapter adapter = new FollowedThreadAdapter(getContext(), objects, no_followed);
-                                recyclerView.setAdapter(adapter);
 
                                 no_followed.setVisibility(View.INVISIBLE);
                                 floatingActionButton.setVisibility(View.VISIBLE);
+
+                                recyclerView.setVisibility(View.VISIBLE);
+                                FollowedThreadAdapter adapter = new FollowedThreadAdapter(getContext(), objects, no_followed);
+                                recyclerView.setAdapter(adapter);
+
                                 if (e == null) {
                                     if (object != null) {
                                         isThreadCreated = true;
@@ -256,7 +260,7 @@ public class FollowedThread extends Fragment {
                                 final ParseObject object = new ParseObject("Threads");
                                 object.put("from_id", id);
                                 object.put("heading", input.getText().toString().trim());
-                                object.put("branch", branch);
+                                object.put("branch", branch.toLowerCase());
                                 object.put("date", new Date());
                                 object.addUnique("connected_id", id);
 

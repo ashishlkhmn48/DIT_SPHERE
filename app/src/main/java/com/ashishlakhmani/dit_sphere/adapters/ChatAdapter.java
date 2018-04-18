@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.constraint.ConstraintLayout;
@@ -53,6 +54,7 @@ public class ChatAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("login",Context.MODE_PRIVATE);
         final MessageObject messageObject = messageObjectList.get(position);
         final String student_id = messageObject.getStudent_id();
         String message = messageObject.getMessage();
@@ -61,7 +63,7 @@ public class ChatAdapter extends RecyclerView.Adapter {
 
         FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) ((MyViewHolder) holder).bubble_layout.getLayoutParams();
 
-        if (sendStatus.isEmpty()) {
+        if (!student_id.equalsIgnoreCase(sharedPreferences.getString("id", ""))) {
             layoutParams.gravity = Gravity.LEFT;
             ((MyViewHolder) holder).bubble_layout.setLayoutParams(layoutParams);
             ((MyViewHolder) holder).bubble_layout.setBackgroundResource(R.drawable.chat_style_left);
@@ -91,86 +93,12 @@ public class ChatAdapter extends RecyclerView.Adapter {
         ((MyViewHolder) holder).id.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                final ProgressDialog progressDialog = new ProgressDialog(context);
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                progressDialog.setTitle("Profile");
-                progressDialog.setMessage("Loading Profile..");
-                progressDialog.show();
-
-                ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Students");
-                query.whereEqualTo("student_id", student_id);
-                query.getFirstInBackground(new GetCallback<ParseObject>() {
-                    @Override
-                    public void done(ParseObject object, ParseException e) {
-                        if (e == null) {
-
-                            final String id = object.getString("student_id");
-                            String name = object.getString("name").toUpperCase();
-                            String branch = object.getString("branch").toUpperCase();
-                            String year = object.getString("year");
-
-                            if (year.equals("1")) {
-                                year += "st Year";
-                            } else if (year.equals("2")) {
-                                year += "nd Year";
-                            } else if (year.equals("3")) {
-                                year += "rd Year";
-                            } else {
-                                year += "th Year";
-                            }
-
-                            final View view = ((Activity) context).getLayoutInflater().inflate(R.layout.layout_profile_alert, null);
-                            TextView id_tv, name_tv, branch_tv, year_tv;
-                            final ImageView picture;
-
-                            id_tv = view.findViewById(R.id.id);
-                            name_tv = view.findViewById(R.id.name);
-                            branch_tv = view.findViewById(R.id.branch);
-                            year_tv = view.findViewById(R.id.year);
-                            picture = view.findViewById(R.id.picture);
-
-                            id_tv.setText(id);
-                            name_tv.setText(name);
-                            branch_tv.setText(branch);
-                            year_tv.setText(year);
-
-                            final ParseFile file = object.getParseFile("picture");
-                            if (file != null) {
-                                file.getDataInBackground(new GetDataCallback() {
-                                    @Override
-                                    public void done(byte[] data, ParseException e) {
-                                        if (e == null) {
-                                            Bitmap img = BitmapFactory.decodeByteArray(data, 0, data.length);
-                                            picture.setImageBitmap(img);
-
-                                            progressDialog.dismiss();
-                                            Dialog alertDialog = new Dialog(context);
-                                            alertDialog.setCancelable(true);
-                                            alertDialog.setContentView(view);
-                                            alertDialog.show();
-                                            Window window = alertDialog.getWindow();
-                                            window.setLayout(1000, 1100);
-                                        } else {
-                                            progressDialog.dismiss();
-                                            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
-                            } else {
-
-                                progressDialog.dismiss();
-                                Dialog alertDialog = new Dialog(context);
-                                alertDialog.setCancelable(true);
-                                alertDialog.setContentView(view);
-                                alertDialog.show();
-                                Window window = alertDialog.getWindow();
-                                window.setLayout(1000, 1100);
-                            }
-                        } else {
-                            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                try{
+                    long temp = Long.parseLong(((ChatAdapter.MyViewHolder) holder).id.getText().toString());
+                    fetchStudentDetails(student_id);
+                }catch (NumberFormatException e){
+                    fetchFacultyDetails(student_id);
+                }
             }
         });
     }
@@ -198,6 +126,165 @@ public class ChatAdapter extends RecyclerView.Adapter {
             time = itemView.findViewById(R.id.time);
             statusImage = itemView.findViewById(R.id.status_image);
         }
+    }
+
+    private void fetchStudentDetails(String id) {
+        final ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setTitle("Profile");
+        progressDialog.setMessage("Loading Profile..");
+        progressDialog.show();
+
+        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Students");
+        query.whereEqualTo("student_id", id);
+        query.getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject object, ParseException e) {
+                if (e == null) {
+
+                    final String id = object.getString("student_id");
+                    String name = object.getString("name").toUpperCase();
+                    String branch = object.getString("branch").toUpperCase();
+                    String year = object.getString("year");
+
+                    if (year.equals("1")) {
+                        year += "st Year";
+                    } else if (year.equals("2")) {
+                        year += "nd Year";
+                    } else if (year.equals("3")) {
+                        year += "rd Year";
+                    } else {
+                        year += "th Year";
+                    }
+
+                    final View view = ((Activity) context).getLayoutInflater().inflate(R.layout.layout_profile_alert, null);
+                    TextView id_tv, name_tv, branch_tv, year_tv;
+                    final ImageView picture;
+
+                    id_tv = view.findViewById(R.id.id);
+                    name_tv = view.findViewById(R.id.name);
+                    branch_tv = view.findViewById(R.id.branch);
+                    year_tv = view.findViewById(R.id.year);
+                    picture = view.findViewById(R.id.picture);
+
+                    id_tv.setText(id);
+                    name_tv.setText(name);
+                    branch_tv.setText(branch);
+                    year_tv.setText(year);
+
+                    final ParseFile file = object.getParseFile("picture");
+                    if (file != null) {
+                        file.getDataInBackground(new GetDataCallback() {
+                            @Override
+                            public void done(byte[] data, ParseException e) {
+                                if (e == null) {
+                                    Bitmap img = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                    picture.setImageBitmap(img);
+
+                                    progressDialog.dismiss();
+                                    Dialog alertDialog = new Dialog(context);
+                                    alertDialog.setCancelable(true);
+                                    alertDialog.setContentView(view);
+                                    alertDialog.show();
+                                    Window window = alertDialog.getWindow();
+                                    window.setLayout(1000, 1100);
+                                } else {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    } else {
+
+                        progressDialog.dismiss();
+                        Dialog alertDialog = new Dialog(context);
+                        alertDialog.setCancelable(true);
+                        alertDialog.setContentView(view);
+                        alertDialog.show();
+                        Window window = alertDialog.getWindow();
+                        window.setLayout(1000, 1100);
+                    }
+                } else {
+                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+
+    private void fetchFacultyDetails(String id) {
+        final ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setTitle("Profile");
+        progressDialog.setMessage("Loading Profile..");
+        progressDialog.show();
+
+        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Faculty");
+        query.whereEqualTo("email_id", id);
+        query.getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject object, ParseException e) {
+                if (e == null) {
+
+                    final String id = object.getString("email_id");
+                    String name = object.getString("name").toUpperCase();
+                    String branch = object.getString("branch").toUpperCase();
+                    String location = object.getString("building").toUpperCase()+", "+object.getString("floor") +" Floor, "+
+                            object.getString("cabin");
+
+
+                    final View view = ((Activity) context).getLayoutInflater().inflate(R.layout.layout_profile_alert_faculty, null);
+                    TextView id_tv, name_tv, branch_tv, loc_tv;
+                    final ImageView picture;
+
+                    id_tv = view.findViewById(R.id.id);
+                    name_tv = view.findViewById(R.id.name);
+                    branch_tv = view.findViewById(R.id.branch);
+                    loc_tv = view.findViewById(R.id.location);
+                    picture = view.findViewById(R.id.picture);
+
+                    id_tv.setText(id);
+                    name_tv.setText(name);
+                    branch_tv.setText(branch);
+                    loc_tv.setText(location);
+
+                    final ParseFile file = object.getParseFile("picture");
+                    if (file != null) {
+                        file.getDataInBackground(new GetDataCallback() {
+                            @Override
+                            public void done(byte[] data, ParseException e) {
+                                if (e == null) {
+                                    Bitmap img = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                    picture.setImageBitmap(img);
+
+                                    progressDialog.dismiss();
+                                    Dialog alertDialog = new Dialog(context);
+                                    alertDialog.setCancelable(true);
+                                    alertDialog.setContentView(view);
+                                    alertDialog.show();
+                                    Window window = alertDialog.getWindow();
+                                    window.setLayout(1000, 1100);
+                                } else {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    } else {
+
+                        progressDialog.dismiss();
+                        Dialog alertDialog = new Dialog(context);
+                        alertDialog.setCancelable(true);
+                        alertDialog.setContentView(view);
+                        alertDialog.show();
+                        Window window = alertDialog.getWindow();
+                        window.setLayout(1000, 1100);
+                    }
+                } else {
+                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private String getDateFormat(String date) {

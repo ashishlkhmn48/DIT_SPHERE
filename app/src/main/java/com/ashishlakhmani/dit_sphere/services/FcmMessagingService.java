@@ -1,5 +1,7 @@
 package com.ashishlakhmani.dit_sphere.services;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -7,17 +9,21 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.support.v7.app.NotificationCompat;
+import android.os.Build;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.ashishlakhmani.dit_sphere.R;
 import com.ashishlakhmani.dit_sphere.activities.ChatActivity;
-import com.ashishlakhmani.dit_sphere.activities.ClubNotificationActivity;
+import com.ashishlakhmani.dit_sphere.activities.ClubActivity;
+import com.ashishlakhmani.dit_sphere.activities.FacultyNotificationActivity;
 import com.ashishlakhmani.dit_sphere.activities.HomeActivity;
+import com.ashishlakhmani.dit_sphere.activities.PlacementCellActivity;
 import com.ashishlakhmani.dit_sphere.activities.UpcomingEventsActivity;
 import com.ashishlakhmani.dit_sphere.classes.LocalChatDatabase;
 import com.ashishlakhmani.dit_sphere.classes.MessageObject;
@@ -36,61 +42,169 @@ public class FcmMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
-        SharedPreferences sharedPreferences = getSharedPreferences("interact_activity", MODE_PRIVATE);
-        String type = remoteMessage.getData().get("type");
+        Log.i("ashish", "Received");
 
+        SharedPreferences sharedPreferences = getSharedPreferences("interact_activity", MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences("login", MODE_PRIVATE);
+        String type = remoteMessage.getData().get("type");
         Random random = new Random();
         int num = random.nextInt(999999999);
-        NotificationCompat.Builder notification = new NotificationCompat.Builder(this);
+
+        NotificationChannel channel = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            channel = new NotificationChannel(getString(R.string.channel_id), getString(R.string.channel_id), NotificationManager.IMPORTANCE_HIGH);
+            channel.enableLights(true);
+            channel.enableVibration(true);
+            channel.setLightColor(Color.BLUE);
+            channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        }
+
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(this, getString(R.string.channel_id));
         notification.setAutoCancel(true);
         notification.setWhen(System.currentTimeMillis());
-        notification.setDefaults(NotificationCompat.DEFAULT_ALL);
+        notification.setDefaults(Notification.DEFAULT_ALL);
 
-        if (type.equals("message")) {
+        try {
+            long l = Long.parseLong(sp.getString("id", ""));
 
-            String object_id = remoteMessage.getData().get("object_id");
-            String id = remoteMessage.getData().get("student_id");
-            String message = remoteMessage.getData().get("message");
-            String heading_message = remoteMessage.getData().get("heading_message");
-            String date = remoteMessage.getData().get("date");
+            if (type.equals("message")) {
 
-            try {
-                WordsFilter wordsFilter = new WordsFilter();
-                String output = wordsFilter.filteredString(message, new InputStreamReader(getAssets().open("bad.txt")));
+                String object_id = remoteMessage.getData().get("object_id");
+                String id = remoteMessage.getData().get("student_id");
+                String message = remoteMessage.getData().get("message");
+                String heading_message = remoteMessage.getData().get("heading_message");
+                String date = remoteMessage.getData().get("date");
 
-                Log.i("Exception", output);
 
-                LocalChatDatabase chatDatabase = new LocalChatDatabase(this, object_id);
-                MessageObject messageObject = new MessageObject(object_id, id, output, date, heading_message, "");
-                chatDatabase.addUserDetails(messageObject);
+                try {
+                    WordsFilter wordsFilter = new WordsFilter();
+                    String output = wordsFilter.filteredString(message, new InputStreamReader(getAssets().open("bad.txt")));
 
-                Log.i("Exception", "ReadnotifyForMessageForeground(); Success");
+                    Log.i("Exception", output);
 
-                if (!sharedPreferences.getBoolean("isOpen", false)) {
-                    notifyForMessageBackground(notification, num, remoteMessage);
-                } else {
-                    notifyForMessageForeground();
+                    LocalChatDatabase chatDatabase = new LocalChatDatabase(this, object_id);
+                    MessageObject messageObject = new MessageObject(object_id, id, output, date, heading_message, "");
+                    chatDatabase.addUserDetails(messageObject);
+
+                    if (!sharedPreferences.getBoolean("isOpen", false)) {
+                        notifyForMessageBackground(notification, num, remoteMessage, channel);
+                    } else {
+                        notifyForMessageForeground();
+                    }
+                } catch (IOException exp) {
+                    Log.i("Exception", exp.getMessage());
                 }
-            } catch (IOException e) {
-                Log.i("Exception", e.getMessage());
+
+            } else if (type.equals("news")) {
+
+                notifyForNews(notification, num, remoteMessage, channel);
+
+            } else if (type.equals("events")) {
+
+                notifyForEvents(notification, num, remoteMessage, channel);
+
+            } else if (type.equals("club")) {
+
+                notifyForClub(notification, num, remoteMessage, channel);
+
+            } else if (type.equals("placement")) {
+
+                notifyForPlacement(notification, num, remoteMessage, channel);
+
+            } else if (type.equals("faculty")) {
+
+                notifyForFaculty(notification, num, remoteMessage, channel);
+
             }
 
-        } else if (type.equals("news")) {
+        } catch (NumberFormatException e) {
 
-            notifyForNews(notification, num, remoteMessage);
+            Log.i("ashish",e.getMessage());
 
-        } else if (type.equals("events")) {
+            if (type.equals("message")) {
 
-            notifyForEvents(notification, num, remoteMessage);
+                String object_id = remoteMessage.getData().get("object_id");
+                String id = remoteMessage.getData().get("student_id");
+                String message = remoteMessage.getData().get("message");
+                String heading_message = remoteMessage.getData().get("heading_message");
+                String date = remoteMessage.getData().get("date");
 
-        } else if (type.equals("club")) {
 
-            notifyForClub(notification, num, remoteMessage);
+                try {
+                    WordsFilter wordsFilter = new WordsFilter();
+                    String output = wordsFilter.filteredString(message, new InputStreamReader(getAssets().open("bad.txt")));
+
+
+                    LocalChatDatabase chatDatabase = new LocalChatDatabase(this, object_id);
+                    MessageObject messageObject = new MessageObject(object_id, id, output, date, heading_message, "");
+                    chatDatabase.addUserDetails(messageObject);
+
+
+                    if (!sharedPreferences.getBoolean("isOpen", false)) {
+                        notifyForMessageBackground(notification, num, remoteMessage, channel);
+                    } else {
+                        notifyForMessageForeground();
+                    }
+                } catch (IOException ex) {
+                    Log.i("Exception", ex.getMessage());
+                }
+
+            }
 
         }
     }
 
-    private void notifyForClub(NotificationCompat.Builder notification, int num, RemoteMessage remoteMessage) {
+    private void notifyForFaculty(NotificationCompat.Builder notification, int num, RemoteMessage remoteMessage, NotificationChannel channel) {
+
+        String heading = remoteMessage.getData().get("heading");
+        String message = remoteMessage.getData().get("message");
+
+        notification.setSmallIcon(R.drawable.faculty);
+        notification.setSubText("Faculty Notifications");
+        notification.setContentTitle(heading);
+        notification.setStyle(new NotificationCompat.BigTextStyle(notification).bigText(message));
+
+        Intent intent = new Intent(this, FacultyNotificationActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pi = PendingIntent.getActivity(this, num, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        notification.setContentIntent(pi);
+
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (nm != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                nm.createNotificationChannel(channel);
+            }
+            nm.notify(num, notification.build());
+        }
+
+    }
+
+
+    private void notifyForPlacement(NotificationCompat.Builder notification, int num, RemoteMessage remoteMessage, NotificationChannel channel) {
+        String companyName = remoteMessage.getData().get("company_name");
+        String dateText = "Coming on : " + remoteMessage.getData().get("date");
+
+        notification.setSmallIcon(R.drawable.placement_cell);
+        notification.setContentTitle(companyName);
+        notification.setContentText(dateText);
+        notification.setSubText("Placement Cell");
+
+        Intent intent = new Intent(this, PlacementCellActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pi = PendingIntent.getActivity(this, num, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        notification.setContentIntent(pi);
+
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (nm != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                nm.createNotificationChannel(channel);
+            }
+            nm.notify(num, notification.build());
+        }
+
+    }
+
+    private void notifyForClub(NotificationCompat.Builder notification, int num, RemoteMessage remoteMessage, NotificationChannel channel) {
 
         String clubName = remoteMessage.getData().get("club_name");
         String heading = remoteMessage.getData().get("heading");
@@ -109,9 +223,9 @@ public class FcmMessagingService extends FirebaseMessagingService {
         notification.setContentTitle(heading);
         notification.setSubText(clubName);
         notification.setContentText(message);
-        notification.setStyle(new android.support.v4.app.NotificationCompat.BigPictureStyle(notification).bigPicture(largeIcon));
+        notification.setStyle(new NotificationCompat.BigPictureStyle(notification).bigPicture(largeIcon));
 
-        Intent intent = new Intent(this, ClubNotificationActivity.class);
+        Intent intent = new Intent(this, ClubActivity.class);
         intent.putExtra("objectId", clubId);
         intent.putExtra("club_name", clubName);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -120,20 +234,23 @@ public class FcmMessagingService extends FirebaseMessagingService {
 
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (nm != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                nm.createNotificationChannel(channel);
+            }
             nm.notify(num, notification.build());
         }
 
     }
 
 
-    private void notifyForNews(NotificationCompat.Builder notification, int num, RemoteMessage remoteMessage) {
+    private void notifyForNews(NotificationCompat.Builder notification, int num, RemoteMessage remoteMessage, NotificationChannel channel) {
 
         String heading_news = remoteMessage.getData().get("heading_news");
 
         notification.setSmallIcon(R.drawable.news);
         notification.setContentTitle("DIT - News");
         notification.setSubText("News");
-        notification.setStyle(new android.support.v4.app.NotificationCompat.BigTextStyle(notification).bigText(heading_news.trim()));
+        notification.setStyle(new NotificationCompat.BigTextStyle(notification).bigText(heading_news.trim()));
 
         Intent intent = new Intent(this, HomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -142,19 +259,22 @@ public class FcmMessagingService extends FirebaseMessagingService {
 
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (nm != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                nm.createNotificationChannel(channel);
+            }
             nm.notify(num, notification.build());
         }
 
     }
 
-    private void notifyForEvents(NotificationCompat.Builder notification, int num, RemoteMessage remoteMessage) {
+    private void notifyForEvents(NotificationCompat.Builder notification, int num, RemoteMessage remoteMessage, NotificationChannel channel) {
 
         String heading_event = remoteMessage.getData().get("heading_event");
 
         notification.setSmallIcon(R.drawable.upcoming);
         notification.setContentTitle("Upcoming Events");
         notification.setSubText("Events");
-        notification.setStyle(new android.support.v4.app.NotificationCompat.BigTextStyle(notification).bigText(heading_event.trim()));
+        notification.setStyle(new NotificationCompat.BigTextStyle(notification).bigText(heading_event.trim()));
 
         Intent intent = new Intent(this, UpcomingEventsActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -163,13 +283,16 @@ public class FcmMessagingService extends FirebaseMessagingService {
 
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (nm != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                nm.createNotificationChannel(channel);
+            }
             nm.notify(num, notification.build());
         }
 
     }
 
 
-    private void notifyForMessageBackground(NotificationCompat.Builder notification, int num, RemoteMessage remoteMessage) {
+    private void notifyForMessageBackground(NotificationCompat.Builder notification, int num, RemoteMessage remoteMessage, NotificationChannel channel) {
 
         String object_id = remoteMessage.getData().get("object_id");
         String id = remoteMessage.getData().get("student_id");
@@ -179,7 +302,7 @@ public class FcmMessagingService extends FirebaseMessagingService {
         notification.setSmallIcon(R.drawable.interact_2);
         notification.setSubText(heading_message);
         notification.setContentTitle(id);
-        notification.setStyle(new android.support.v4.app.NotificationCompat.BigTextStyle(notification).bigText(message));
+        notification.setStyle(new NotificationCompat.BigTextStyle(notification).bigText(message));
 
         Intent intent = new Intent(this, ChatActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -190,6 +313,9 @@ public class FcmMessagingService extends FirebaseMessagingService {
 
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (nm != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                nm.createNotificationChannel(channel);
+            }
             nm.notify(num, notification.build());
         }
 
@@ -217,6 +343,5 @@ public class FcmMessagingService extends FirebaseMessagingService {
         sendBroadcast(i);
 
     }
-
 
 }

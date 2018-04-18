@@ -43,7 +43,6 @@ public class FollowedClub extends Fragment {
     String objectId;
     String clubName;
 
-
     public FollowedClub() {
         // Required empty public constructor
     }

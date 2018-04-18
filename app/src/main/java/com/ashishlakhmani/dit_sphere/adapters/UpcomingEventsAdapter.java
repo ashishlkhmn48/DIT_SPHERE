@@ -9,7 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -27,7 +27,6 @@ import android.widget.ToggleButton;
 
 import com.ashishlakhmani.dit_sphere.R;
 import com.ashishlakhmani.dit_sphere.activities.UpcomingEventsActivity;
-import com.ashishlakhmani.dit_sphere.fragments.news.NewsWebView;
 import com.ashishlakhmani.dit_sphere.services.NotificationReceiver;
 import com.parse.ParseObject;
 
@@ -69,11 +68,7 @@ public class UpcomingEventsAdapter extends RecyclerView.Adapter {
         ((UpcomingEventsAdapter.MyViewHolder) holder).card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NewsWebView newsWebView = new NewsWebView();
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("parse_object", objectList.get(position));
-                newsWebView.setArguments(bundle);
-                loadFragment(newsWebView, "news_image");
+                context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(objectList.get(position).getString("url"))));
             }
         });
 
@@ -115,7 +110,7 @@ public class UpcomingEventsAdapter extends RecyclerView.Adapter {
             notification = itemView.findViewById(R.id.toggle_notification);
             sno = itemView.findViewById(R.id.sno);
             heading = itemView.findViewById(R.id.name);
-            date = itemView.findViewById(R.id.credit);
+            date = itemView.findViewById(R.id.date);
         }
     }
 

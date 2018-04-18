@@ -29,10 +29,12 @@ import com.ashishlakhmani.dit_sphere.R;
 import com.ashishlakhmani.dit_sphere.classes.NotificationClub;
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,8 +46,8 @@ import it.sephiroth.android.library.tooltip.Tooltip;
 
 public class PushNotificationActivity extends AppCompatActivity {
 
-    ImageView image, image_date;
     EditText heading, message;
+    ImageView image, image_date;
     TextView dateText;
     LinearLayout layout;
 
@@ -153,7 +155,11 @@ public class PushNotificationActivity extends AppCompatActivity {
                         object.put("date", date);
 
                         if (img != null) {
-                            object.put("image", img);
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            img.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                            byte[] byteArray = stream.toByteArray();
+                            ParseFile file = new ParseFile("event.jpg",byteArray);
+                            object.put("image", file);
                         }
 
                         object.saveInBackground(new SaveCallback() {
@@ -161,9 +167,9 @@ public class PushNotificationActivity extends AppCompatActivity {
                             public void done(ParseException e) {
                                 progressDialog.dismiss();
                                 if (e == null) {
-                                    NotificationClub notificationClub = new NotificationClub(getApplicationContext());
+                                    NotificationClub notificationClub = new NotificationClub(getApplicationContext(),progressDialog);
                                     notificationClub.execute(object.getObjectId(), clubName, object.getString("club_id"));
-                                    Toast.makeText(PushNotificationActivity.this, clubName, Toast.LENGTH_SHORT).show();
+                                    reInitialize();
                                 } else {
                                     Toast.makeText(PushNotificationActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
@@ -186,9 +192,9 @@ public class PushNotificationActivity extends AppCompatActivity {
                             public void done(ParseException e) {
                                 progressDialog.dismiss();
                                 if (e == null) {
-                                    NotificationClub notificationClub = new NotificationClub(getApplicationContext());
+                                    NotificationClub notificationClub = new NotificationClub(getApplicationContext(),progressDialog);
                                     notificationClub.execute(parseObject.getObjectId(), clubName, object.getString("club_id"));
-                                    Toast.makeText(PushNotificationActivity.this, clubName, Toast.LENGTH_SHORT).show();
+                                    reInitialize();
                                 } else {
                                     Toast.makeText(PushNotificationActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
@@ -230,6 +236,15 @@ public class PushNotificationActivity extends AppCompatActivity {
 
             }
         }
+    }
+
+    private void reInitialize() {
+        heading.setText("");
+        message.setText("");
+        dateText.setText("Select Date of Event");
+        date = null;
+        image.setImageResource(R.drawable.placeholder_album);
+        img = null;
     }
 
     //Permission check

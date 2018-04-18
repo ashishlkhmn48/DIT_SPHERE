@@ -55,7 +55,7 @@ public class FollowedThreadAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         final String objectID = objectList.get(position).getObjectId();
         final String heading = objectList.get(position).getString("heading");
         final String id = objectList.get(position).getString("from_id");
@@ -69,7 +69,12 @@ public class FollowedThreadAdapter extends RecyclerView.Adapter {
         ((MyViewHolder) holder).id.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fetchStudentDetails(id);
+                try{
+                    long student_id = Long.parseLong(((MyViewHolder) holder).id.getText().toString());
+                    fetchStudentDetails(id);
+                }catch (NumberFormatException e){
+                    fetchFacultyDetails(id);
+                }
             }
         });
 
@@ -260,4 +265,81 @@ public class FollowedThreadAdapter extends RecyclerView.Adapter {
             }
         });
     }
+
+
+    private void fetchFacultyDetails(String id) {
+        final ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setTitle("Profile");
+        progressDialog.setMessage("Loading Profile..");
+        progressDialog.show();
+
+        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Faculty");
+        query.whereEqualTo("email_id", id);
+        query.getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject object, ParseException e) {
+                if (e == null) {
+
+                    final String id = object.getString("email_id");
+                    String name = object.getString("name").toUpperCase();
+                    String branch = object.getString("branch").toUpperCase();
+                    String location = object.getString("building").toUpperCase()+", "+object.getString("floor") +" Floor, "+
+                            object.getString("cabin");
+
+
+                    final View view = ((Activity) context).getLayoutInflater().inflate(R.layout.layout_profile_alert_faculty, null);
+                    TextView id_tv, name_tv, branch_tv, loc_tv;
+                    final ImageView picture;
+
+                    id_tv = view.findViewById(R.id.id);
+                    name_tv = view.findViewById(R.id.name);
+                    branch_tv = view.findViewById(R.id.branch);
+                    loc_tv = view.findViewById(R.id.location);
+                    picture = view.findViewById(R.id.picture);
+
+                    id_tv.setText(id);
+                    name_tv.setText(name);
+                    branch_tv.setText(branch);
+                    loc_tv.setText(location);
+
+                    final ParseFile file = object.getParseFile("picture");
+                    if (file != null) {
+                        file.getDataInBackground(new GetDataCallback() {
+                            @Override
+                            public void done(byte[] data, ParseException e) {
+                                if (e == null) {
+                                    Bitmap img = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                    picture.setImageBitmap(img);
+
+                                    progressDialog.dismiss();
+                                    Dialog alertDialog = new Dialog(context);
+                                    alertDialog.setCancelable(true);
+                                    alertDialog.setContentView(view);
+                                    alertDialog.show();
+                                    Window window = alertDialog.getWindow();
+                                    window.setLayout(1000, 1100);
+                                } else {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    } else {
+
+                        progressDialog.dismiss();
+                        Dialog alertDialog = new Dialog(context);
+                        alertDialog.setCancelable(true);
+                        alertDialog.setContentView(view);
+                        alertDialog.show();
+                        Window window = alertDialog.getWindow();
+                        window.setLayout(1000, 1100);
+                    }
+                } else {
+                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
 }
